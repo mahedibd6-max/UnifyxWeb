@@ -32,3 +32,6 @@ secrets.json
 # Logs
 logs/
 *.log
+
+# Raw screenshots before the e-mail was blurred — never publish these
+docs/erp/Git-*.jpg
