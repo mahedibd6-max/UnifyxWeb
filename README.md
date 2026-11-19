@@ -10,6 +10,20 @@ The public marketing website for **Unifyx ERP**, an HR, payroll, inventory and a
 
 ---
 
+## The ERP behind the website
+
+Unifyx ERP is a multi-company (one database per company) ASP.NET Core MVC application with HR, payroll and Bangladesh income tax, inventory, purchase & sales with VAT, fixed assets, double-entry accounts, tickets and approvals. Anyone can try it with sample data at **https://app.unifyxerp.com → Try Demo**.
+
+| Business Overview | Payroll menu |
+|---|---|
+| ![Business Overview](docs/erp/01-business-overview.png) | ![Payroll](docs/erp/02-payroll-menu.png) |
+| **Accounts reports** | **Inventory stock** |
+| ![Accounts](docs/erp/03-accounts-report.png) | ![Inventory](docs/erp/04-inventory.png) |
+| **Login with Try Demo** | **Day mode** |
+| ![Login](docs/erp/05-login.png) | ![Day mode](docs/erp/06-day-mode.png) |
+
+---
+
 ## Features
 
 **Public site**
