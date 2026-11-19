@@ -1,0 +1,62 @@
+@page
+@model UnifyxWeb.Pages.Admin.ProductsModel
+@{ ViewData["Title"] = "Products"; }
+<h2>Products</h2>
+<p class="muted">Products show under <b>Products ▾</b> in the website menu, each with its own page. While none is added (or all are hidden), the menu shows <b>Modules</b> as before.</p>
+@if (Model.Saved != null) { <div class="ok-msg">@Model.Saved</div> }
+<div class="panel">
+    @if (Model.Items.Count == 0) { <p class="muted">No products yet. Start with <b>Unifyx ERP</b> and tick "main product".</p> }
+    @foreach (var p in Model.Items)
+    {
+        <div style="display:flex;justify-content:space-between;gap:1rem;align-items:center;border-bottom:1px solid var(--line);padding:.6rem 0">
+            <div><b>@p.SortOrder.</b> <span style="font-size:1.2rem">@p.Icon</span> @p.NameEn
+                <span class="muted">· /Products/@p.Slug</span>
+                @if (p.UseHomePage) { <span class="tx-badge">main product</span> }
+                @if (p.ComingSoon) { <span class="tx-badge">coming soon</span> }
+                @if (!p.IsActive) { <span class="muted">(hidden)</span> }</div>
+            <div style="display:flex;gap:.5rem">
+                @if (p.IsActive) { <a class="btn btn-ghost btn-sm" href="@(p.UseHomePage ? "/en#modules" : "/en/Products/" + p.Slug)" target="_blank" rel="noopener">View ↗</a> }
+                <a class="btn btn-ghost btn-sm" href="?edit=@p.Id">Edit</a>
+                <form method="post" asp-page-handler="Delete" asp-route-id="@p.Id" class="inline" onsubmit="return confirm('Delete this product?')">
+                    <button class="btn btn-ghost btn-sm" type="submit">Delete</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+<form method="post" asp-page-handler="Save" enctype="multipart/form-data" class="panel">
+    <h3>@(Model.Input.Id == 0 ? "Add a product" : "Change product")</h3>
+    <input type="hidden" asp-for="Input.Id" />
+    <div asp-validation-summary="All" class="validation-summary-errors"></div>
+    <div class="form-grid">
+        <div class="field"><label asp-for="Input.NameEn">Name (English)</label><input asp-for="Input.NameEn" placeholder="Unifyx POS" /></div>
+        <div class="field"><label asp-for="Input.NameBn">Name (বাংলা)</label><input asp-for="Input.NameBn" /></div>
+        <div class="field"><label asp-for="Input.TaglineEn">One-line summary (English)</label><input asp-for="Input.TaglineEn" placeholder="Billing and stock for shops" /><div class="hint">Shows in the menu and on the product card.</div></div>
+        <div class="field"><label asp-for="Input.TaglineBn">One-line summary (বাংলা)</label><input asp-for="Input.TaglineBn" /></div>
+        <div class="field"><label asp-for="Input.DescriptionEn">About the product (English)</label><textarea asp-for="Input.DescriptionEn" rows="6"></textarea><div class="hint">Leave an empty line between paragraphs.</div></div>
+        <div class="field"><label asp-for="Input.DescriptionBn">About the product (বাংলা)</label><textarea asp-for="Input.DescriptionBn" rows="6"></textarea></div>
+        <div class="field"><label asp-for="Input.FeaturesEn">What you get (English)</label><textarea asp-for="Input.FeaturesEn" rows="5" placeholder="One per line"></textarea><div class="hint">One per line — each shows with a ✓.</div></div>
+        <div class="field"><label asp-for="Input.FeaturesBn">What you get (বাংলা)</label><textarea asp-for="Input.FeaturesBn" rows="5"></textarea></div>
+        <div class="field"><label asp-for="Input.Icon">Icon</label><input asp-for="Input.Icon" placeholder="🧾" maxlength="8" /><div class="hint">Click an icon below, or type / paste any emoji.</div><partial name="_IconPicker" /></div>
+        <div class="field"><label asp-for="Input.Slug">Page address</label><input asp-for="Input.Slug" placeholder="made from the name" /><div class="hint">/en/Products/<b>this-part</b>. Leave empty to make it from the English name.</div></div>
+        <div class="field"><label asp-for="Input.AppUrl">"Open" button link (optional)</label><input asp-for="Input.AppUrl" type="text" placeholder="app.unifyxerp.com" /><div class="hint">Where customers log in to this product.</div></div>
+        <div class="field"><label asp-for="Input.SortOrder">Order</label><input asp-for="Input.SortOrder" /><div class="hint">1 shows first.</div></div>
+        <div class="field">
+            <label asp-for="Image">Picture (optional)</label>
+            @if (!string.IsNullOrEmpty(Model.Input.ImagePath))
+            {
+                <img src="@Model.Input.ImagePath" alt="" style="max-width:220px;border-radius:8px;margin-bottom:.4rem" />
+                <div><label><input type="checkbox" asp-for="RemoveImage" /> Remove picture</label></div>
+            }
+            <input asp-for="Image" type="file" accept=".jpg,.jpeg,.png,.webp" />
+            <div class="hint">A screenshot of the product. JPG, PNG or WebP, up to 3 MB.</div>
+        </div>
+        <div class="field">
+            <label><input type="checkbox" asp-for="Input.IsActive" /> Show on the website</label>
+            <label><input type="checkbox" asp-for="Input.UseHomePage" /> Main product — the menu opens the home page</label>
+            <label><input type="checkbox" asp-for="Input.ComingSoon" /> Show "Coming soon"</label>
+        </div>
+    </div>
+    <button class="btn btn-primary" type="submit" style="margin-top:1rem">Save</button>
+    @if (Model.Input.Id != 0) { <a class="btn btn-ghost" href="/admin/products" style="margin-top:1rem">Cancel</a> }
+</form>

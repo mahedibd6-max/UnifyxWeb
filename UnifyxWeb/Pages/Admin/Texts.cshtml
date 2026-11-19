@@ -1,0 +1,78 @@
+@page
+@model UnifyxWeb.Pages.Admin.TextsModel
+@{ ViewData["Title"] = "Texts"; int i = 0; string? lastSection = null; }
+<h2>Texts</h2>
+<p class="muted">Change any heading, sentence, button or menu name on the website. Edit the boxes and press <b>Save</b> at the bottom. A box you empty goes back to the built-in text.</p>
+@if (Model.Saved != null) { <div class="ok-msg">@Model.Saved</div> }
+
+<form method="get" class="tx-find">
+    <input type="hidden" name="tab" value="@Model.Tab" />
+    <input name="find" value="@Model.Find" placeholder="Find a text on any page, e.g. Request a demo" />
+    <button class="btn btn-ghost btn-sm" type="submit">Find</button>
+    @if (Model.Find != null) { <a class="btn btn-ghost btn-sm" href="?tab=@Model.Tab">Clear</a> }
+</form>
+
+@if (Model.Find == null)
+{
+    <div class="dr-tabs tx-tabs">
+        @foreach (var t in Model.Tabs)
+        {
+            <a class="@(t.Page == Model.Tab ? "on" : "")" href="?tab=@t.Page">@t.Name @if (t.Changed > 0) { <span class="tx-count">@t.Changed changed</span> }</a>
+        }
+    </div>
+}
+else
+{
+    <p class="muted">@Model.Rows.Count found for “@Model.Find”.</p>
+}
+
+<form method="post" asp-page-handler="Save" asp-route-tab="@Model.Tab" asp-route-find="@Model.Find">
+@foreach (var r in Model.Rows)
+{
+    var heading = Model.Find == null ? r.Def.Section : r.Def.PageName + " · " + r.Def.Section;
+    if (heading != lastSection)
+    {
+        if (lastSection != null) { @:</div>
+        }
+        lastSection = heading;
+        @:<div class="panel"><h3 class="tx-sec">@heading</h3>
+    }
+    bool longText = r.Def.En.Length > 70 || r.Def.Bn.Length > 70;
+    <div class="tx-row @(r.Changed ? "changed" : "")">
+        <input type="hidden" name="Items[@i].Key" value="@r.Def.Key" />
+        <div class="tx-field">
+            <label for="en@(i)">English</label>
+            @if (longText) { <textarea id="en@(i)" name="Items[@i].En" rows="3">@r.En</textarea> }
+            else { <input id="en@(i)" name="Items[@i].En" value="@r.En" /> }
+        </div>
+        <div class="tx-field">
+            <label for="bn@(i)">বাংলা</label>
+            @if (longText) { <textarea id="bn@(i)" name="Items[@i].Bn" rows="3">@r.Bn</textarea> }
+            else { <input id="bn@(i)" name="Items[@i].Bn" value="@r.Bn" /> }
+        </div>
+        <div class="tx-side">
+            @if (r.Changed)
+            {
+                <span class="tx-badge">Changed</span>
+                <button class="btn btn-ghost btn-sm" type="submit" form="reset@(i)" title="Built-in: @r.Def.En">Undo</button>
+            }
+        </div>
+    </div>
+    i++;
+}
+@if (lastSection != null) { @:</div>
+}
+@if (Model.Rows.Count > 0)
+{
+    <div class="tx-save"><button class="btn btn-primary" type="submit">Save</button><span class="muted">Saves the changes on this page.</span></div>
+}
+</form>
+@{ int j = 0; }
+@foreach (var r in Model.Rows)
+{
+    if (r.Changed)
+    {
+        <form id="reset@(j)" method="post" asp-page-handler="Reset" asp-route-key="@r.Def.Key" asp-route-tab="@Model.Tab" asp-route-find="@Model.Find" class="inline"></form>
+    }
+    j++;
+}

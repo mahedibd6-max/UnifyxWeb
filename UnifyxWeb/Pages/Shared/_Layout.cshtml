@@ -1,0 +1,165 @@
+@inject VisitStats Visits
+@{
+    var site = SiteOpt.Value;
+    var visitTotals = await Visits.GetAsync();
+    string title = ViewData["Title"] as string ?? "";
+    string description = ViewData["Description"] as string
+        ?? C.T("layout.001", "HR, payroll with Bangladesh income tax, inventory, purchase, sales, accounts and assets — one system for growing businesses in Bangladesh.", "এইচআর, বাংলাদেশের আয়কর অনুযায়ী বেতন, স্টক, ক্রয়-বিক্রয়, হিসাব আর সম্পদ — বাংলাদেশের প্রতিষ্ঠানের জন্য এক সফটওয়্যারে।");
+    // The part after /en or /bn, for the language links (named so it never reads as Razor's @page).
+    string pathRest = (Context.Request.Path.Value ?? "").Length > 3 ? Context.Request.Path.Value![4..] : "";
+}
+<!DOCTYPE html>
+<html lang="@L.Code" data-theme="dark">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@(string.IsNullOrEmpty(title) ? "Unifyx ERP" : title + " · Unifyx ERP")</title>
+    <meta name="description" content="@description" />
+    @{
+        // Full addresses for search engines and social sharing (works on localhost, a tunnel or the real domain).
+        string origin = Seo.Origin(Context.Request);
+        string pageUrl = Seo.Url(origin, L.Code, pathRest.TrimEnd('/'));
+        string ogImage = origin + "/img/og-image.jpg";
+        string fullTitle = string.IsNullOrEmpty(title) ? "Unifyx ERP" : title + " · Unifyx ERP";
+    }
+    <link rel="canonical" href="@pageUrl" />
+    <link rel="alternate" hreflang="en" href="@Seo.Url(origin, "en", pathRest.TrimEnd('/'))" />
+    <link rel="alternate" hreflang="bn" href="@Seo.Url(origin, "bn", pathRest.TrimEnd('/'))" />
+    <link rel="alternate" hreflang="x-default" href="@Seo.Url(origin, "en", pathRest.TrimEnd('/'))" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="theme-color" content="#0b1f3a" />
+    <meta property="og:site_name" content="Unifyx ERP" />
+    <meta property="og:title" content="@fullTitle" />
+    <meta property="og:description" content="@description" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@pageUrl" />
+    <meta property="og:image" content="@ogImage" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="@(L.IsBangla ? "bn_BD" : "en_US")" />
+    <meta property="og:locale:alternate" content="@(L.IsBangla ? "en_US" : "bn_BD")" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@fullTitle" />
+    <meta name="twitter:description" content="@description" />
+    <meta name="twitter:image" content="@ogImage" />
+    <link rel="apple-touch-icon" href="/img/og-image.jpg" />
+    @RenderSection("Head", required: false)
+    <link rel="icon" href="/img/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script>
+        // Day / night: the visitor's choice, else the computer's setting (set before the page paints).
+        (function () { try { var t = localStorage.getItem('ux-theme-v2') || 'dark'; /* night by default; the sun/moon button still switches */ document.documentElement.setAttribute('data-theme', t); } catch (e) { } })();
+    </script>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="@(L.IsBangla ? "lang-bn" : "lang-en")">
+    <header class="nav">
+        <div class="wrap nav-inner">
+            <a class="brand" href="@L.Url()" aria-label="Unifyx ERP — @C.T("layout.002", "home", "হোম")">
+                <img class="brand-logo" src="~/img/unifyx-logo.svg" asp-append-version="true" alt="Unifyx ERP — Business, unified" width="227" height="54" />
+                <img class="brand-logo brand-logo-dark" src="~/img/unifyx-logo-white.svg" asp-append-version="true" alt="" width="227" height="54" />
+            </a>
+            <button class="nav-toggle" aria-label="@C.T("layout.003", "Menu", "মেনু")" aria-expanded="false" aria-controls="navLinks">☰</button>
+            <nav id="navLinks" class="nav-links">
+                @if (PM.Items.Count == 0)
+                {
+                    <a href="@L.Url()#modules" data-section="modules">@C.T("layout.004", "Modules", "মডিউল")</a>
+                }
+                else
+                {
+                    <div class="nav-dd">
+                        <button class="nav-dd-btn" type="button" aria-expanded="false" aria-haspopup="true">@C.T("layout.p01", "Products", "পণ্য") <span class="dd-caret" aria-hidden="true">▾</span></button>
+                        <div class="nav-dd-menu">
+                            @foreach (var pr in PM.Items)
+                            {
+                                <a href="@PM.Link(pr)">
+                                    <span class="dd-ic" aria-hidden="true">@(string.IsNullOrEmpty(pr.Icon) ? "▣" : pr.Icon)</span>
+                                    <span class="dd-txt"><b>@PM.Name(pr)</b>@if (!string.IsNullOrWhiteSpace(PM.Tagline(pr))) { <small>@PM.Tagline(pr)</small> }</span>
+                                    @if (pr.ComingSoon) { <em class="dd-soon">@C.T("layout.p03", "Coming soon", "শিগগিরই আসছে")</em> }
+                                </a>
+                            }
+                            <a class="dd-all" href="@L.Url("Products")">@C.T("layout.p02", "All products", "সব পণ্য") →</a>
+                        </div>
+                    </div>
+                }
+                <a href="@L.Url()#features" data-section="features">@C.T("layout.005", "Features", "সুবিধা")</a>
+                <a href="@L.Url()#industries" data-section="industries">@C.T("layout.006", "Who it's for", "কাদের জন্য")</a>
+                <a href="@L.Url("News")" data-page="news">@C.T("layout.007", "News", "খবর")</a>
+                <a href="@L.Url("Pricing")" data-page="pricing">@C.T("layout.008", "Pricing", "প্যাকেজ")</a>
+                <a href="@L.Url("Contact")" data-page="contact">@C.T("layout.009", "Contact", "যোগাযোগ")</a>
+                <a class="btn btn-ghost" href="@site.AppUrl">@C.T("layout.010", "Login", "লগইন")</a>
+                <a class="btn btn-accent" href="@L.Url("Contact")#demo">@C.T("layout.011", "Request a demo", "ডেমো দেখুন")</a>
+                <span class="nav-tools">
+                    <button class="theme-toggle" type="button" aria-label="@C.T("layout.p04", "Switch day / night", "দিন / রাত বদলান")" title="@C.T("layout.p04", "Switch day / night", "দিন / রাত বদলান")">
+                        <svg class="ic-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg>
+                        <svg class="ic-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.2A8.5 8.5 0 0 1 9.8 3.5 8.5 8.5 0 1 0 20.5 14.2z"/></svg>
+                    </button>
+                    <a class="lang-switch" href="@L.SwitchUrl()" data-lang="@(L.IsBangla ? "en" : "bn")">@(L.IsBangla ? "English" : "বাংলা")</a>
+                </span>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <div class="wrap footer-grid">
+            <div>
+                <img class="footer-logo" src="~/img/unifyx-logo-white.svg" asp-append-version="true" alt="Unifyx ERP" width="185" height="44" />
+                <p class="muted-light">@C.T("layout.012", "One system for HR, payroll, inventory and accounts — built for Bangladesh.", "এইচআর, বেতন, স্টক আর হিসাব — এক সফটওয়্যারে, বাংলাদেশের নিয়মে।")</p>
+                <partial name="_Social" />
+            </div>
+            <div>
+                <h4>@C.T("layout.013", "Product", "পণ্য")</h4>
+                <a href="@L.Url()#modules">@C.T("layout.014", "Modules", "মডিউল")</a>
+                <a href="@L.Url("Pricing")">@C.T("layout.015", "Pricing", "প্যাকেজ")</a>
+                <a href="@site.AppUrl">@C.T("layout.016", "Login", "লগইন")</a>
+            </div>
+            <div>
+                <h4>@C.T("layout.017", "Company", "প্রতিষ্ঠান")</h4>
+                <a href="@L.Url("Contact")">@C.T("layout.018", "Contact", "যোগাযোগ")</a>
+                <a href="@L.Url("Privacy")">@C.T("layout.019", "Privacy Policy", "গোপনীয়তা নীতি")</a>
+                <a href="@L.Url("Terms")">@C.T("layout.020", "Terms of Service", "ব্যবহারের শর্তাবলি")</a>
+            </div>
+            <div>
+                <h4>@C.T("layout.021", "Get in touch", "যোগাযোগ করুন")</h4>
+                <span>@site.Phone</span>
+                <a href="mailto:@site.Email">@site.Email</a>
+                <span>@site.Address</span>
+            </div>
+        </div>
+        <div class="wrap footer-bottom">
+            <span>© @DateTime.Now.Year Unifyx. @C.T("layout.022", "All rights reserved.", "সর্বস্বত্ব সংরক্ষিত।")</span>
+            @if (visitTotals.PageViews > 0)
+            {
+                <div class="footer-hits" title="@C.T("layout.026", "Counted since the website opened", "ওয়েবসাইট চালুর দিন থেকে গোনা")">
+                    <div class="fh-item">
+                        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm0 2c-3.3 0-8 1.7-8 5v1h16v-1c0-3.3-4.7-5-8-5z"/></svg>
+                        <b>@visitTotals.Visitors.ToString("N0")</b>
+                        <small>@C.T("layout.024", "Visitors", "ভিজিটর")</small>
+                    </div>
+                    <div class="fh-item">
+                        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 5c-5 0-9 4.5-10 7 1 2.5 5 7 10 7s9-4.5 10-7c-1-2.5-5-7-10-7zm0 11.5A4.5 4.5 0 1 1 12 7.5a4.5 4.5 0 0 1 0 9zm0-7a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/></svg>
+                        <b>@visitTotals.PageViews.ToString("N0")</b>
+                        <small>@C.T("layout.025", "Page views", "পেজ ভিউ")</small>
+                    </div>
+                </div>
+            }
+        </div>
+    </footer>
+
+    @if (!string.IsNullOrEmpty(site.WhatsApp))
+    {
+        <a class="wa-float" href="https://wa.me/@site.WhatsApp" target="_blank" rel="noopener" aria-label="@C.T("layout.023", "Chat on WhatsApp", "WhatsApp-এ কথা বলুন")">
+            <svg viewBox="0 0 32 32" width="26" height="26" aria-hidden="true"><path fill="#fff" d="M16 3a13 13 0 0 0-11.2 19.6L3 29l6.6-1.7A13 13 0 1 0 16 3zm0 23.6c-2 0-4-.6-5.7-1.6l-.4-.2-3.9 1 1-3.8-.3-.4A10.6 10.6 0 1 1 16 26.6zm5.8-7.9c-.3-.2-1.9-.9-2.2-1s-.5-.2-.7.2-.8 1-1 1.2-.4.2-.7 0a8.7 8.7 0 0 1-4.3-3.8c-.3-.6.3-.5.9-1.7.1-.2 0-.4 0-.5l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6a1.2 1.2 0 0 0-.9.4 3.6 3.6 0 0 0-1.1 2.7 6.3 6.3 0 0 0 1.3 3.3c.2.2 2.3 3.6 5.7 5 2.1.9 3 1 4 .8.7-.1 1.9-.8 2.2-1.6s.3-1.4.2-1.6-.3-.2-.6-.4z"/></svg>
+        </a>
+    }
+    <partial name="_Popup" />
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,101 @@
+@page
+@{
+    ViewData["Title"] = C.T("pricing.001", "Packages", "প্যাকেজ");
+    ViewData["Description"] = C.T("pricing.desc", "Unifyx ERP packages: pick only the modules you need — HR, payroll with Bangladesh income tax, inventory, purchase, sales and accounts — with setup and training.", "Unifyx ERP-এর প্যাকেজ: শুধু দরকারি মডিউল নিন — এইচআর, আয়কর অনুযায়ী বেতন, স্টক, ক্রয়-বিক্রয় ও হিসাব — সেটআপ ও ট্রেনিংসহ।");
+    // Modules a customer can pick (key = the box ticked on the demo form).
+    var mods = new[]
+    {
+        ("HRM", "👥", C.T("pricing.040", "HR & Attendance", "এইচআর ও হাজিরা"), C.T("pricing.041", "Employees, leave, shifts, biometric attendance", "কর্মী, ছুটি, শিফট, Biometric হাজিরা")),
+        ("Payroll", "💰", C.T("pricing.042", "Payroll & Income Tax", "বেতন ও আয়কর"), C.T("pricing.043", "Salary, tax, PF, gratuity, loans, bonus", "বেতন, কর, PF, গ্র্যাচুইটি, ঋণ, বোনাস")),
+        ("Inventory", "📦", C.T("pricing.044", "Inventory", "স্টক"), C.T("pricing.045", "Stores, requisitions, issues, stock counts", "স্টোর, Requisition, বিতরণ, স্টক গণনা")),
+        ("Purchase", "🛒", C.T("pricing.046", "Purchase", "ক্রয়"), C.T("pricing.047", "Purchase orders, GRN, supplier bills", "Purchase Order, GRN, Supplier bill")),
+        ("Sales", "🧾", C.T("pricing.048", "Sales", "বিক্রয়"), C.T("pricing.049", "Orders, VAT invoices, collections", "Order, ভ্যাটসহ Invoice, আদায়")),
+        ("Accounts", "📒", C.T("pricing.050", "Accounts", "হিসাব"), C.T("pricing.051", "Vouchers, ledgers, P&L, balance sheet", "Voucher, খতিয়ান, লাভ-ক্ষতি, ব্যালান্স শিট")),
+        ("Asset", "🏢", C.T("pricing.052", "Fixed Assets", "স্থায়ী সম্পদ"), C.T("pricing.053", "Asset register, depreciation, barcode audit", "সম্পদের তালিকা, অবচয়, বারকোড অডিট")),
+        ("IssueTracking", "🎫", C.T("pricing.054", "Issue Tracking", "কাজের টিকেট"), C.T("pricing.055", "Give work, follow up, reminders", "কাজ দেওয়া, অগ্রগতি দেখা, রিমাইন্ডার"))
+    };
+    var plans = new[]
+    {
+        (C.T("pricing.002", "Starter", "স্টার্টার"), C.T("pricing.003", "For small teams starting with HR and salary.", "এইচআর আর বেতন দিয়ে শুরু করা ছোট প্রতিষ্ঠানের জন্য।"), C.T("pricing.004", "2 modules: HR + Payroll", "২টা মডিউল: এইচআর + বেতন"), false, "HRM,Payroll",
+            new[] { C.T("pricing.005", "HR & attendance", "এইচআর ও হাজিরা"), C.T("pricing.006", "Leave with approval", "অনুমোদনসহ ছুটি"), C.T("pricing.007", "Monthly payroll & payslips", "মাসিক বেতন ও Payslip"), C.T("pricing.008", "Biometric attendance", "Biometric হাজিরা"), C.T("pricing.009", "Help in Bangla", "বাংলায় সাহায্য") }),
+        (C.T("pricing.010", "Business", "বিজনেস"), C.T("pricing.011", "For growing companies that need tax, benefits and one more module.", "যেসব প্রতিষ্ঠানে কর, সুবিধা আর একটা বাড়তি মডিউল দরকার।"), C.T("pricing.012", "3–4 modules of your choice", "পছন্দমতো ৩–৪টা মডিউল"), true, "HRM,Payroll,Inventory",
+            new[] { C.T("pricing.013", "Everything in Starter", "স্টার্টারের সবকিছু"), C.T("pricing.014", "Income tax, PF, gratuity, loans, bonus", "আয়কর, PF, গ্র্যাচুইটি, ঋণ, বোনাস"), C.T("pricing.015", "Inventory or Accounts", "Inventory অথবা Accounts"), C.T("pricing.016", "Approval workflows & digital signatures", "অনুমোদনের ধাপ ও ডিজিটাল স্বাক্ষর"), C.T("pricing.017", "Business Overview", "Business Overview") }),
+        (C.T("pricing.018", "Complete ERP", "সম্পূর্ণ ERP"), C.T("pricing.019", "For companies that want everything in one place.", "যারা সবকিছু এক জায়গায় চান।"), C.T("pricing.020", "All 8 modules", "৮টা মডিউলই"), false, "HRM,Payroll,Inventory,Purchase,Sales,Accounts,Asset,IssueTracking",
+            new[] { C.T("pricing.021", "Every module, one login", "সব মডিউল, এক লগইনে"), C.T("pricing.022", "Purchase, sales & accounts with auto-posting", "স্বয়ংক্রিয় এন্ট্রিসহ ক্রয়, বিক্রয় ও হিসাব"), C.T("pricing.023", "Fixed assets & issue tracking", "স্থায়ী সম্পদ ও টিকেট"), C.T("pricing.024", "Full Business Overview with profit and cash", "লাভ ও নগদসহ পূর্ণ Business Overview"), C.T("pricing.025", "Priority support", "অগ্রাধিকার সাপোর্ট") })
+    };
+}
+<div class="page-head">
+    <div class="wrap">
+        <span class="eyebrow">@C.T("pricing.026", "Packages", "প্যাকেজ")</span>
+        <h1>@C.T("pricing.027", "Take only the modules you need", "যে মডিউল দরকার, শুধু সেটাই নিন")</h1>
+        <p class="muted" style="max-width:720px">@C.T("pricing.028", "Every business is different. Start with what you need today — for example HR and Payroll — and add Inventory, Accounts or any other module whenever you want. Your data carries over and the price follows the modules you choose. Setup, data import and training are quoted separately.", "প্রতিটা প্রতিষ্ঠান আলাদা। আজ যা দরকার তা দিয়ে শুরু করুন — যেমন এইচআর আর বেতন — আর যখন খুশি স্টক, হিসাব বা অন্য মডিউল যোগ করুন। আগের তথ্য থেকে যায়, আর দাম হয় বেছে নেওয়া মডিউল অনুযায়ী। সেটআপ, তথ্য আনা আর প্রশিক্ষণের খরচ আলাদা।")</p>
+    </div>
+</div>
+
+<section class="section-alt" id="build">
+    <div class="wrap">
+        <div class="section-head">
+            <span class="eyebrow">@C.T("pricing.033", "Build your own plan", "নিজের প্যাকেজ বানান")</span>
+            <h2>@C.T("pricing.034", "Tick the modules your business needs", "আপনার প্রতিষ্ঠানের দরকারি মডিউলে টিক দিন")</h2>
+            <p>@C.T("pricing.035", "No fixed bundles. Choose any mix — we'll send you a price for exactly those modules.", "বাঁধা প্যাকেজ নেই। যেকোনো মিশ্রণ বেছে নিন — ঠিক সেই মডিউলগুলোর দাম জানাব।")</p>
+        </div>
+        <div class="mod-pick" id="modPick">
+            @foreach (var (key, icon, name, desc) in mods)
+            {
+                <label class="mod-opt">
+                    <input type="checkbox" value="@key" @(key is "HRM" or "Payroll" ? "checked" : "") />
+                    <span class="mod-box">
+                        <span class="mod-ic" aria-hidden="true">@icon</span>
+                        <span class="mod-txt"><b>@name</b><small>@desc</small></span>
+                        <span class="mod-check" aria-hidden="true">✓</span>
+                    </span>
+                </label>
+            }
+        </div>
+        <div class="mod-sum">
+            <span><b id="modCount">2</b> @C.T("pricing.036", "modules chosen", "টা মডিউল বেছে নেওয়া হয়েছে")</span>
+            <a class="btn btn-accent btn-lg" id="modGo" href="@L.Url("Contact")?m=HRM,Payroll#demo">@C.T("pricing.037", "Get a price for these", "এগুলোর দাম জানুন") →</a>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="wrap">
+        <div class="section-head">
+            <span class="eyebrow">@C.T("pricing.038", "Popular starting points", "জনপ্রিয় শুরু")</span>
+            <h2>@C.T("pricing.039", "Or start from a ready package", "অথবা তৈরি প্যাকেজ দিয়ে শুরু করুন")</h2>
+        </div>
+        <div class="grid-3">
+            @foreach (var (name, text, size, featured, preset, points) in plans)
+            {
+                <div class="card price-card @(featured ? "featured" : "")">
+                    @if (featured) { <span class="tag">@C.T("pricing.029", "Most chosen", "সবচেয়ে জনপ্রিয়")</span> }
+                    <h3>@name</h3>
+                    <p>@text</p>
+                    <div class="price">@C.T("pricing.030", "Contact us for pricing", "দামের জন্য যোগাযোগ করুন")</div>
+                    <div class="price-mods">@size</div>
+                    <ul>@foreach (var p in points) { <li>@p</li> }</ul>
+                    <a class="btn @(featured ? "btn-accent" : "btn-ghost")" href="@L.Url("Contact")?m=@preset#demo">@C.T("pricing.031", "Get a quote", "দাম জানুন")</a>
+                </div>
+            }
+        </div>
+        <p class="muted" style="text-align:center;margin-top:28px">@C.T("pricing.032", "Several companies or branches, or a special need? We'll make a plan for you. Yearly payment gets two months free.", "একাধিক প্রতিষ্ঠান বা শাখা, বা বিশেষ কোনো চাহিদা? আপনার জন্য আলাদা প্যাকেজ করব। বার্ষিক অগ্রিমে দুই মাস ফ্রি।")</p>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+// Count the ticked modules and carry them to the demo form.
+(function () {
+    var box = document.getElementById('modPick'), go = document.getElementById('modGo'), count = document.getElementById('modCount');
+    if (!box || !go) return;
+    var base = go.getAttribute('href').split('?')[0];
+    function update() {
+        var keys = Array.prototype.map.call(box.querySelectorAll('input:checked'), function (i) { return i.value; });
+        count.textContent = keys.length;
+        go.setAttribute('href', base + (keys.length ? '?m=' + keys.join(',') : '') + '#demo');
+    }
+    box.addEventListener('change', update); update();
+})();
+</script>
+}

@@ -1,0 +1,49 @@
+@page
+@model UnifyxWeb.Pages.Admin.ModulesModel
+@{ ViewData["Title"] = "Modules"; }
+<h2>Modules</h2>
+<p class="muted">The module cards in "Modules" on the home page, in this order. While this list is empty, the website shows the 8 built-in modules.</p>
+@if (Model.Saved != null) { <div class="ok-msg">@Model.Saved</div> }
+<div class="panel">
+    @if (Model.Items.Count == 0)
+    {
+        <p>The list is empty, so the home page shows the 8 built-in modules.</p>
+        <p class="muted">To change them or add a 9th, first copy the 8 here — then edit any of them and add new ones.</p>
+        <form method="post" asp-page-handler="Import" class="inline">
+            <button class="btn btn-primary" type="submit">Copy the 8 built-in modules here</button>
+        </form>
+    }
+    @foreach (var m in Model.Items)
+    {
+        <div style="display:flex;justify-content:space-between;gap:1rem;align-items:center;border-bottom:1px solid var(--line);padding:.6rem 0">
+            <div><b>@m.SortOrder.</b> <span style="font-size:1.2rem">@m.Icon</span> @m.NameEn @if (!m.IsActive) { <span class="muted">(hidden)</span> }</div>
+            <div style="display:flex;gap:.5rem">
+                <a class="btn btn-ghost btn-sm" href="?edit=@m.Id">Edit</a>
+                <form method="post" asp-page-handler="Delete" asp-route-id="@m.Id" class="inline" onsubmit="return confirm('Delete this module card?')">
+                    <button class="btn btn-ghost btn-sm" type="submit">Delete</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+@if (Model.Items.Count > 0 || Model.Input.Id != 0)
+{
+<form method="post" asp-page-handler="Save" class="panel">
+    <h3>@(Model.Input.Id == 0 ? "Add a module" : "Change module")</h3>
+    <input type="hidden" asp-for="Input.Id" />
+    <div asp-validation-summary="All" class="validation-summary-errors"></div>
+    <div class="form-grid">
+        <div class="field"><label asp-for="Input.NameEn">Name (English)</label><input asp-for="Input.NameEn" placeholder="Production" /></div>
+        <div class="field"><label asp-for="Input.NameBn">Name (বাংলা)</label><input asp-for="Input.NameBn" /></div>
+        <div class="field"><label asp-for="Input.TextEn">Short description (English)</label><textarea asp-for="Input.TextEn" rows="3" maxlength="300"></textarea></div>
+        <div class="field"><label asp-for="Input.TextBn">Short description (বাংলা)</label><textarea asp-for="Input.TextBn" rows="3" maxlength="300"></textarea></div>
+        <div class="field"><label asp-for="Input.PointsEn">Points (English)</label><textarea asp-for="Input.PointsEn" rows="4" placeholder="One per line — three looks best"></textarea></div>
+        <div class="field"><label asp-for="Input.PointsBn">Points (বাংলা)</label><textarea asp-for="Input.PointsBn" rows="4"></textarea></div>
+        <div class="field"><label asp-for="Input.Icon">Icon</label><input asp-for="Input.Icon" maxlength="8" placeholder="🏭" /><div class="hint">Click an icon below, or type / paste any emoji.</div><partial name="_IconPicker" /></div>
+        <div class="field"><label asp-for="Input.SortOrder">Order</label><input asp-for="Input.SortOrder" /><div class="hint">1 shows first.</div></div>
+        <div class="field"><label><input type="checkbox" asp-for="Input.IsActive" /> Show on the website</label></div>
+    </div>
+    <button class="btn btn-primary" type="submit" style="margin-top:1rem">Save</button>
+    @if (Model.Input.Id != 0) { <a class="btn btn-ghost" href="/admin/modules" style="margin-top:1rem">Cancel</a> }
+</form>
+}

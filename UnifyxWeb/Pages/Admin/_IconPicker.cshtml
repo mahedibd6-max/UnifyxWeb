@@ -1,0 +1,20 @@
+@* Click an icon to put it in the Icon box above. *@
+<div class="icon-pick" role="group" aria-label="Pick an icon">
+    @foreach (var e in new[] { "👥","💰","📦","🛒","🧾","📒","🏢","🎫","🏭","🚚","🏬","🏪","🏫","🏥","🍽️","🏗️","🧵","🌾","💊","🏦","📊","📈","🗂️","📋","🧮","💳","📱","💻","🖨️","🔒","🛠️","⚙️","📅","⏰","🎓","👤","🤝","📞","✉️","🌐","🚀","⭐","✅","🔔","🧩","📍","🔧","🧪" })
+    {
+        <button type="button" data-icon="@e" title="@e">@e</button>
+    }
+</div>
+<script>
+    (function () {
+        var box = document.currentScript.previousElementSibling;
+        var input = box.closest('.field').querySelector('input[name$="Icon"]');
+        function mark() { box.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', input && b.dataset.icon === input.value.trim()); }); }
+        box.addEventListener('click', function (e) {
+            var b = e.target.closest('button[data-icon]'); if (!b || !input) return;
+            input.value = b.dataset.icon; mark(); input.dispatchEvent(new Event('input'));
+        });
+        if (input) input.addEventListener('input', mark);
+        mark();
+    })();
+</script>

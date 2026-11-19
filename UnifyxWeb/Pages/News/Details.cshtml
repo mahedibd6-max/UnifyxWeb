@@ -1,0 +1,17 @@
+@page "{id:int}"
+@model UnifyxWeb.Pages.News.DetailsModel
+@{
+    var p = Model.Post;
+    string title = L.IsBangla && !string.IsNullOrWhiteSpace(p.TitleBn) ? p.TitleBn! : p.TitleEn;
+    string body = L.IsBangla && !string.IsNullOrWhiteSpace(p.BodyBn) ? p.BodyBn! : p.BodyEn;
+    ViewData["Title"] = title;
+}
+<div class="page-head"><div class="wrap prose">
+    <a href="@L.Url("News")">← @C.T("news.005", "All news", "সব খবর")</a>
+    <h1 style="margin-top:.6rem">@title</h1>
+    <p class="muted">@p.PublishedOn.ToString("dd MMMM yyyy")</p>
+</div></div>
+<section><div class="wrap prose">
+    @if (!string.IsNullOrEmpty(p.ImagePath)) { <img src="@p.ImagePath" alt="" class="news-photo" /> }
+    @TextFormat.Paragraphs(body)
+</div></section>

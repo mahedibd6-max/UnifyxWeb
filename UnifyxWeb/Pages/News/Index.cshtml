@@ -1,0 +1,28 @@
+@page
+@model UnifyxWeb.Pages.News.IndexModel
+@{
+    ViewData["Title"] = C.T("news.001", "News", "খবর");
+}
+<div class="page-head"><div class="wrap">
+    <span class="eyebrow">@C.T("news.002", "News", "খবর")</span>
+    <h1>@C.T("news.003", "Updates from Unifyx", "Unifyx-এর খবর")</h1>
+</div></div>
+<section><div class="wrap">
+    @if (Model.Items.Count == 0)
+    {
+        <p class="muted">@C.T("news.004", "No news yet.", "এখনো কোনো খবর নেই।")</p>
+    }
+    else
+    {
+        <div class="grid-3">
+            @foreach (var n in Model.Items)
+            {
+                <a class="card news-card" href="@L.Url("News/Details/" + n.Id)">
+                    @if (!string.IsNullOrEmpty(n.ImagePath)) { <img src="@n.ImagePath" alt="" loading="lazy" /> }
+                    <small class="muted">@n.PublishedOn.ToString("dd MMM yyyy")</small>
+                    <h3>@(L.IsBangla && !string.IsNullOrWhiteSpace(n.TitleBn) ? n.TitleBn : n.TitleEn)</h3>
+                </a>
+            }
+        </div>
+    }
+</div></section>

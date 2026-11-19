@@ -1,0 +1,68 @@
+@page "{slug?}"
+@model UnifyxWeb.Pages.Products.IndexModel
+@{
+    var p = Model.One;
+    ViewData["Title"] = p == null ? C.T("products.001", "Products", "পণ্য") : PM.Name(p);
+    if (p != null && !string.IsNullOrWhiteSpace(PM.Tagline(p))) ViewData["Description"] = PM.Tagline(p);
+}
+@if (p == null)
+{
+    <div class="page-head"><div class="wrap">
+        <span class="eyebrow">@C.T("products.002", "Products", "পণ্য")</span>
+        <h1>@C.T("products.003", "Software for every part of your business", "ব্যবসার প্রতিটা কাজের জন্য সফটওয়্যার")</h1>
+        <p class="muted" style="max-width:640px">@C.T("products.004", "Choose what fits your business today, and add more as you grow.", "আজ যা দরকার তা দিয়ে শুরু করুন, বড় হলে আরও যোগ করুন।")</p>
+    </div></div>
+    <section><div class="wrap">
+        @if (Model.Items.Count == 0)
+        {
+            <p class="muted">@C.T("products.010", "No products yet.", "এখনো কোনো পণ্য যোগ করা হয়নি।")</p>
+        }
+        else
+        {
+            <div class="product-grid">
+                @foreach (var x in Model.Items)
+                {
+                    <a class="card product-card" href="@PM.Link(x)">
+                        @if (!string.IsNullOrEmpty(x.ImagePath)) { <img src="@x.ImagePath" alt="" loading="lazy" /> }
+                        <div class="product-top">
+                            <span class="product-ic" aria-hidden="true">@(string.IsNullOrEmpty(x.Icon) ? "▣" : x.Icon)</span>
+                            @if (x.ComingSoon) { <em class="dd-soon">@C.T("layout.p03", "Coming soon", "শিগগিরই আসছে")</em> }
+                        </div>
+                        <h3>@PM.Name(x)</h3>
+                        @if (!string.IsNullOrWhiteSpace(PM.Tagline(x))) { <p>@PM.Tagline(x)</p> }
+                        <span class="product-more">@C.T("products.005", "Learn more", "বিস্তারিত") →</span>
+                    </a>
+                }
+            </div>
+        }
+    </div></section>
+}
+else
+{
+    var features = PM.Features(p);
+    <div class="page-head product-head"><div class="wrap">
+        <a href="@L.Url("Products")">← @C.T("products.006", "All products", "সব পণ্য")</a>
+        <div class="product-title">
+            <span class="product-ic big" aria-hidden="true">@(string.IsNullOrEmpty(p.Icon) ? "▣" : p.Icon)</span>
+            <div>
+                <h1>@PM.Name(p) @if (p.ComingSoon) { <em class="dd-soon">@C.T("layout.p03", "Coming soon", "শিগগিরই আসছে")</em> }</h1>
+                @if (!string.IsNullOrWhiteSpace(PM.Tagline(p))) { <p class="muted lead">@PM.Tagline(p)</p> }
+            </div>
+        </div>
+        <div class="hero-cta">
+            <a class="btn btn-accent btn-lg" href="@L.Url("Contact")#demo">@C.T("products.008", "Request a demo", "ডেমো দেখুন")</a>
+            @if (!string.IsNullOrEmpty(p.AppUrl)) { <a class="btn btn-ghost btn-lg" href="@p.AppUrl">@C.T("products.009", "Open", "খুলুন") ↗</a> }
+        </div>
+    </div></div>
+    <section><div class="wrap product-body @(string.IsNullOrEmpty(p.ImagePath) ? "no-pic" : "")">
+        <div class="prose">
+            @TextFormat.Paragraphs(PM.Description(p))
+            @if (features.Length > 0)
+            {
+                <h2>@C.T("products.007", "What you get", "যা পাবেন")</h2>
+                <ul class="product-features">@foreach (var f in features) { <li>@f</li> }</ul>
+            }
+        </div>
+        @if (!string.IsNullOrEmpty(p.ImagePath)) { <img class="product-shot" src="@p.ImagePath" alt="@PM.Name(p)" /> }
+    </div></section>
+}

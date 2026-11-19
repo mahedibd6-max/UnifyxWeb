@@ -1,0 +1,36 @@
+@page
+@model UnifyxWeb.Pages.Admin.FaqsModel
+@{ ViewData["Title"] = "Questions (FAQ)"; }
+<h2>Questions (FAQ)</h2>
+<p class="muted">While this list is empty, the home page shows the built-in questions.</p>
+@if (Model.Saved != null) { <div class="ok-msg">@Model.Saved</div> }
+<div class="panel">
+    @if (Model.Items.Count == 0) { <p class="muted">No questions yet.</p> }
+    @foreach (var f in Model.Items)
+    {
+        <div style="display:flex;justify-content:space-between;gap:1rem;align-items:center;border-bottom:1px solid var(--line);padding:.6rem 0">
+            <div><b>@f.SortOrder.</b> @f.QuestionEn @if (!f.IsActive) { <span class="muted">(hidden)</span> }</div>
+            <div style="display:flex;gap:.5rem">
+                <a class="btn btn-ghost btn-sm" href="?edit=@f.Id">Edit</a>
+                <form method="post" asp-page-handler="Delete" asp-route-id="@f.Id" class="inline" onsubmit="return confirm('Delete this question?')">
+                    <button class="btn btn-ghost btn-sm" type="submit">Delete</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+<form method="post" asp-page-handler="Save" class="panel">
+    <h3>@(Model.Input.Id == 0 ? "Add a question" : "Change question")</h3>
+    <input type="hidden" asp-for="Input.Id" />
+    <div asp-validation-summary="All" class="validation-summary-errors"></div>
+    <div class="form-grid">
+        <div class="field"><label asp-for="Input.QuestionEn">Question (English)</label><input asp-for="Input.QuestionEn" /></div>
+        <div class="field"><label asp-for="Input.QuestionBn">Question (বাংলা)</label><input asp-for="Input.QuestionBn" /></div>
+        <div class="field"><label asp-for="Input.AnswerEn">Answer (English)</label><textarea asp-for="Input.AnswerEn" rows="4"></textarea></div>
+        <div class="field"><label asp-for="Input.AnswerBn">Answer (বাংলা)</label><textarea asp-for="Input.AnswerBn" rows="4"></textarea></div>
+        <div class="field"><label asp-for="Input.SortOrder">Order</label><input asp-for="Input.SortOrder" /></div>
+        <div class="field"><label><input type="checkbox" asp-for="Input.IsActive" /> Show on the website</label></div>
+    </div>
+    <button class="btn btn-primary" type="submit" style="margin-top:1rem">Save</button>
+    @if (Model.Input.Id != 0) { <a class="btn btn-ghost" href="/admin/faqs" style="margin-top:1rem">Cancel</a> }
+</form>

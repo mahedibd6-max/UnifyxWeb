@@ -1,0 +1,48 @@
+@page
+@model UnifyxWeb.Pages.Admin.NewsModel
+@{ ViewData["Title"] = "News"; }
+<h2>News</h2>
+<p class="muted">The newest three published items show on the home page; all of them on the News page. A future date publishes it on that day.</p>
+@if (Model.Saved != null) { <div class="ok-msg">@Model.Saved</div> }
+<div class="panel">
+    @if (Model.Items.Count == 0) { <p class="muted">No news yet.</p> }
+    @foreach (var n in Model.Items)
+    {
+        <div style="display:flex;justify-content:space-between;gap:1rem;align-items:center;border-bottom:1px solid var(--line);padding:.6rem 0">
+            <div><span class="muted">@n.PublishedOn.ToString("dd MMM yyyy")</span> · @n.TitleEn
+                @if (!n.IsPublished) { <span class="muted">(draft)</span> }
+                else if (n.PublishedOn > DateTime.Today) { <span class="muted">(scheduled)</span> }</div>
+            <div style="display:flex;gap:.5rem">
+                <a class="btn btn-ghost btn-sm" href="?edit=@n.Id">Edit</a>
+                <form method="post" asp-page-handler="Delete" asp-route-id="@n.Id" class="inline" onsubmit="return confirm('Delete this news item?')">
+                    <button class="btn btn-ghost btn-sm" type="submit">Delete</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+<form method="post" asp-page-handler="Save" enctype="multipart/form-data" class="panel">
+    <h3>@(Model.Input.Id == 0 ? "Write news" : "Change news")</h3>
+    <input type="hidden" asp-for="Input.Id" />
+    <div asp-validation-summary="All" class="validation-summary-errors"></div>
+    <div class="form-grid">
+        <div class="field"><label asp-for="Input.TitleEn">Title (English)</label><input asp-for="Input.TitleEn" /></div>
+        <div class="field"><label asp-for="Input.TitleBn">Title (বাংলা)</label><input asp-for="Input.TitleBn" /></div>
+        <div class="field"><label asp-for="Input.BodyEn">Text (English)</label><textarea asp-for="Input.BodyEn" rows="8"></textarea><div class="hint">Leave an empty line between paragraphs.</div></div>
+        <div class="field"><label asp-for="Input.BodyBn">Text (বাংলা)</label><textarea asp-for="Input.BodyBn" rows="8"></textarea></div>
+        <div class="field"><label asp-for="Input.PublishedOn">Date</label><input asp-for="Input.PublishedOn" type="date" /></div>
+        <div class="field"><label><input type="checkbox" asp-for="Input.IsPublished" /> Published (untick to keep as a draft)</label></div>
+        <div class="field">
+            <label asp-for="Image">Picture (optional)</label>
+            @if (!string.IsNullOrEmpty(Model.Input.ImagePath))
+            {
+                <img src="@Model.Input.ImagePath" alt="" style="max-width:220px;border-radius:8px;margin-bottom:.4rem" />
+                <div><label><input type="checkbox" asp-for="RemoveImage" /> Remove picture</label></div>
+            }
+            <input asp-for="Image" type="file" accept=".jpg,.jpeg,.png,.webp" />
+            <div class="hint">JPG, PNG or WebP, up to 3 MB.</div>
+        </div>
+    </div>
+    <button class="btn btn-primary" type="submit" style="margin-top:1rem">Save</button>
+    @if (Model.Input.Id != 0) { <a class="btn btn-ghost" href="/admin/news" style="margin-top:1rem">Cancel</a> }
+</form>

@@ -1,0 +1,374 @@
+@page
+@model UnifyxWeb.Pages.IndexModel
+@{
+    var h = Model.Home;
+    string Pick(string? en, string? bn, string fallback)
+    {
+        var v = L.IsBangla && !string.IsNullOrWhiteSpace(bn) ? bn : en;
+        return string.IsNullOrWhiteSpace(v) ? fallback : v;
+    }
+    ViewData["Title"] = C.T("home.001", "ERP for Bangladesh: HR, Payroll, Inventory & Accounts", "বাংলাদেশের ERP: এইচআর, বেতন, স্টক ও হিসাব");
+    var site = SiteOpt.Value;
+    // This month's name for the sample "payroll done" card (changes by itself every month).
+    string[] bnMonths = { "জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর" };
+    string thisMonth = L.IsBangla ? bnMonths[DateTime.Today.Month - 1]
+        : System.Globalization.CultureInfo.GetCultureInfo("en-US").DateTimeFormat.GetMonthName(DateTime.Today.Month);
+    var modules = new[]
+    {
+        ("👥", C.T("home.002", "HR & Attendance", "এইচআর ও হাজিরা"), C.T("home.003", "Employee records, leave, shifts and holidays, with biometric attendance.", "কর্মচারীর তথ্য, ছুটি, শিফট আর ছুটির দিন, Biometric হাজিরাসহ।"),
+            new[] { C.T("home.004", "Leave requests with approval", "অনুমোদনসহ ছুটির আবেদন"), C.T("home.005", "ZKTeco biometric sync", "ZKTeco Biometric যুক্ত"), C.T("home.006", "Promotions and history", "পদোন্নতি ও ইতিহাস") }),
+        ("💰", C.T("home.007", "Payroll & Income Tax", "বেতন ও আয়কর"), C.T("home.008", "Monthly salary with Bangladesh income tax, PF, gratuity, loans and bonus.", "বাংলাদেশের আয়কর, PF, গ্র্যাচুইটি, ঋণ আর বোনাসসহ মাসিক বেতন।"),
+            new[] { C.T("home.009", "Payslips by email (PDF)", "ইমেইলে Payslip (PDF)"), C.T("home.010", "Tax slabs, rebate, TDS, certificates", "করের হার, রেয়াত, TDS, সনদ"), C.T("home.011", "Final settlement", "চূড়ান্ত নিষ্পত্তি") }),
+        ("📦", C.T("home.012", "Inventory", "স্টক ব্যবস্থাপনা"), C.T("home.013", "Stores, items, requisitions and issues, with reorder alerts and stock counts.", "স্টোর, পণ্য, Requisition আর বিতরণ, কম স্টকের সতর্কতা আর স্টক গণনাসহ।"),
+            new[] { C.T("home.014", "Requisition → approval → issue", "Requisition → অনুমোদন → বিতরণ"), C.T("home.015", "Store transfers", "স্টোর থেকে স্টোরে স্থানান্তর"), C.T("home.016", "Stock value and ledger", "স্টকের মূল্য ও খতিয়ান") }),
+        ("🛒", C.T("home.017", "Purchase", "ক্রয়"), C.T("home.018", "Purchase orders, goods receipt (GRN) with signatures, supplier bills and payments.", "Purchase Order, স্বাক্ষরসহ GRN, Supplier bill আর পেমেন্ট।"),
+            new[] { C.T("home.019", "PO approval", "PO অনুমোদন"), C.T("home.020", "Supplier dues by age", "বয়স অনুযায়ী Supplier দেনা"), C.T("home.021", "Purchase returns", "ক্রয় ফেরত") }),
+        ("🧾", C.T("home.022", "Sales", "বিক্রয়"), C.T("home.023", "Customers, sales orders, invoices with VAT, collections and returns.", "Customer, Sales Order, VAT-সহ Invoice, আদায় আর ফেরত।"),
+            new[] { C.T("home.024", "Mushak-ready invoices", "মূসক-উপযোগী Invoice"), C.T("home.025", "Customer dues and overdue", "Customer বকেয়া ও মেয়াদোত্তীর্ণ"), C.T("home.026", "Sales returns", "বিক্রয় ফেরত") }),
+        ("📒", C.T("home.027", "Accounts", "হিসাব"), C.T("home.028", "Chart of accounts, vouchers with approval, and automatic posting from every module.", "হিসাবের খাত, অনুমোদনসহ Voucher, আর প্রতিটা মডিউল থেকে স্বয়ংক্রিয় এন্ট্রি।"),
+            new[] { C.T("home.029", "Profit & Loss, Balance Sheet", "লাভ-ক্ষতি, ব্যালান্স শিট"), C.T("home.030", "Bank reconciliation", "ব্যাংক মিলকরণ"), C.T("home.031", "Budget vs actual", "বাজেট বনাম প্রকৃত") }),
+        ("🏢", C.T("home.032", "Fixed Assets", "স্থায়ী সম্পদ"), C.T("home.033", "Asset register, depreciation, movements, disposals and barcode audits.", "সম্পদের তালিকা, অবচয়, স্থানান্তর, নিষ্পত্তি আর বারকোড দিয়ে অডিট।"),
+            new[] { C.T("home.034", "Barcode / QR labels", "বারকোড / QR লেবেল"), C.T("home.035", "Audit with phone camera", "ফোনের ক্যামেরায় অডিট"), C.T("home.036", "Book value reports", "বুক ভ্যালু রিপোর্ট") }),
+        ("🎫", C.T("home.037", "Issue Tracking", "কাজের টিকেট"), C.T("home.038", "Give work to people and departments, follow it up, and get reminders.", "মানুষ বা বিভাগকে কাজ দেওয়া, অগ্রগতি দেখা আর মনে করিয়ে দেওয়া।"),
+            new[] { C.T("home.039", "Priorities and due dates", "অগ্রাধিকার ও শেষ তারিখ"), C.T("home.040", "Automatic reminders", "স্বয়ংক্রিয় রিমাইন্ডার"), C.T("home.041", "Ticket reports", "টিকেট রিপোর্ট") })
+    };
+}
+
+@section Head {
+    <script type="application/ld+json">
+    @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new object[] {
+        new Dictionary<string, object> {
+            ["@context"] = "https://schema.org", ["@type"] = "Organization", ["name"] = "Unifyx",
+            ["url"] = Seo.Origin(ViewContext.HttpContext.Request), ["logo"] = Seo.Origin(ViewContext.HttpContext.Request) + "/img/og-image.jpg" },
+        new Dictionary<string, object> {
+            ["@context"] = "https://schema.org", ["@type"] = "SoftwareApplication", ["name"] = "Unifyx ERP",
+            ["applicationCategory"] = "BusinessApplication", ["operatingSystem"] = "Web browser",
+            ["description"] = "HR, payroll with Bangladesh income tax, inventory, purchase, sales, accounts and assets in one system.",
+            ["areaServed"] = "Bangladesh", ["inLanguage"] = new[] { "en", "bn" },
+            ["offers"] = new Dictionary<string, object> { ["@type"] = "Offer", ["priceCurrency"] = "BDT", ["url"] = Seo.Origin(ViewContext.HttpContext.Request) + "/en/Pricing" } }
+    }))
+    </script>
+}
+
+
+<section class="hero" id="top">
+    <div class="wrap hero-grid">
+        <div>
+            <span class="eyebrow">@Pick(h?.EyebrowEn, h?.EyebrowBn, L.T("ERP built for Bangladesh", "বাংলাদেশের জন্য তৈরি ERP"))</span>
+            <h1>@Pick(h?.TitleEn, h?.TitleBn, L.T("HR, Payroll, Inventory & Accounts — one system.", "এইচআর, বেতন, স্টক আর হিসাব — এক সফটওয়্যারে।"))</h1>
+            <p class="lead">@Pick(h?.LeadEn, h?.LeadBn, L.T("Unifyx ERP brings your people, salaries, stock, purchases, sales and books together, following Bangladesh income tax and VAT rules — so the numbers always match.",
+                                 "Unifyx ERP আপনার কর্মী, বেতন, স্টক, ক্রয়-বিক্রয় আর হিসাব এক জায়গায় আনে, বাংলাদেশের আয়কর আর ভ্যাটের নিয়ম মেনে — যাতে হিসাব সবসময় মেলে।"))</p>
+            <div class="hero-cta">
+                <a class="btn btn-accent btn-lg" href="@L.Url("Contact")#demo">@C.T("home.042", "Request a free demo", "ফ্রি ডেমো দেখুন")</a>
+                <a class="btn btn-ghost btn-lg" href="#modules">@C.T("home.043", "See the modules", "মডিউলগুলো দেখুন")</a>
+            </div>
+            <ul class="trust">
+                <li>@C.T("home.044", "Separate database for each company", "প্রতিটা প্রতিষ্ঠানের আলাদা ডাটাবেস")</li>
+                <li>@C.T("home.045", "Help in Bangla", "বাংলায় সাহায্য")</li>
+                <li>@C.T("home.046", "Take only the modules you need", "যতটুকু দরকার, ততটুকুই নিন")</li>
+            </ul>
+        </div>
+        @if (!string.IsNullOrEmpty(h?.HeroImagePath))
+        {
+            <img class="hero-shot" src="@h.HeroImagePath" alt="@C.T("home.047", "Unifyx ERP screen", "Unifyx ERP-এর পাতা")" />
+        }
+        else
+        {
+        <div class="mock-stage" id="mockStage">
+            <div class="mock-glow g1" aria-hidden="true"></div>
+            <div class="mock-glow g2" aria-hidden="true"></div>
+            <div class="mock-tilt" id="mockTilt">
+                <div class="mock" role="img" aria-label="@C.T("home.048", "Business Overview screen of Unifyx ERP", "Unifyx ERP-এর Business Overview পাতা")">
+                    <div class="mock-bar"><i></i><i></i><i></i><span>Business Overview</span><b class="mock-live">● @C.T("home.049", "Live", "লাইভ")</b></div>
+                    <div class="mock-body">
+                        <div class="mock-kpis">
+                            <div class="kpi k1"><span class="kpi-ic">৳</span><small>@C.T("home.050", "Sales this month", "এ মাসের বিক্রি")</small><strong>Tk 18.4 lakh</strong><em>▲ 12%</em>
+                                <svg class="spark" viewBox="0 0 60 18" aria-hidden="true"><polyline points="0,15 10,12 20,13 30,8 40,9 50,4 60,2"/></svg></div>
+                            <div class="kpi k2"><span class="kpi-ic">↗</span><small>@C.T("home.051", "Profit this month", "এ মাসের লাভ")</small><strong>Tk 3.1 lakh</strong><em>▲ 8%</em>
+                                <svg class="spark" viewBox="0 0 60 18" aria-hidden="true"><polyline points="0,14 10,15 20,10 30,11 40,7 50,8 60,4"/></svg></div>
+                            <div class="kpi k3"><span class="kpi-ic">🏦</span><small>@C.T("home.052", "Cash & bank", "নগদ ও ব্যাংক")</small><strong>Tk 42.7 lakh</strong><em class="flat">@C.T("home.053", "6 accounts", "৬টা হিসাব")</em>
+                                <svg class="spark" viewBox="0 0 60 18" aria-hidden="true"><polyline points="0,9 10,8 20,10 30,7 40,8 50,6 60,6"/></svg></div>
+                        </div>
+                        <div class="mock-row">
+                            <div class="mock-chart">
+                                <small>@C.T("home.054", "Sales by month", "মাসভিত্তিক বিক্রি")</small>
+                                <div class="bars" aria-hidden="true">
+                                    <span style="--h:38%;--d:0"></span><span style="--h:46%;--d:1"></span><span style="--h:41%;--d:2"></span><span style="--h:55%;--d:3"></span>
+                                    <span style="--h:52%;--d:4"></span><span style="--h:63%;--d:5"></span><span style="--h:60%;--d:6"></span><span style="--h:71%;--d:7"></span>
+                                    <span style="--h:68%;--d:8"></span><span style="--h:80%;--d:9"></span><span style="--h:77%;--d:10"></span><span class="now" style="--h:92%;--d:11"></span>
+                                </div>
+                            </div>
+                            <div class="mock-donut">
+                                <small>@C.T("home.055", "Payroll", "বেতন")</small>
+                                <div class="donut" aria-hidden="true"><span>92%</span></div>
+                                <small class="donut-cap">@C.T("home.056", "paid", "পরিশোধিত")</small>
+                            </div>
+                        </div>
+                        <div class="mock-alert">⚠ @C.T("home.057", "3 purchase orders and 5 leave requests are waiting for approval.", "৩টা Purchase Order আর ৫টা ছুটির আবেদন অনুমোদনের অপেক্ষায়।")</div>
+                    </div>
+                </div>
+                <div class="float-card fc1" aria-hidden="true"><span class="fc-ic ok">✓</span><div><b>@(C.T("home.058", "{month} payroll done", "{month} মাসের বেতন সম্পন্ন").Replace("{month}", thisMonth))</b><small>@C.T("home.059", "248 employees · tax deducted", "২৪৮ জন কর্মী · কর কাটা হয়েছে")</small></div></div>
+                <div class="float-card fc2" aria-hidden="true"><span class="fc-ic warn">!</span><div><b>@C.T("home.060", "4 items running low", "৪টা পণ্য প্রায় শেষ")</b><small>@C.T("home.061", "Purchase request ready", "Purchase request তৈরি")</small></div></div>
+                <div class="float-card fc3" aria-hidden="true"><span class="fc-ic up">৳</span><div><b>+Tk 2.4 lakh</b><small>@C.T("home.062", "sales today", "আজকের বিক্রি")</small></div></div>
+            </div>
+        </div>
+        }
+    </div>
+</section>
+
+<div class="strip">
+    <div class="wrap">
+        <div class="strip-grid">
+        @{
+            var stripIcons = new[] {
+                "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"2\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\" rx=\"2\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\" rx=\"2\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"2\"/></svg>",
+                "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z\"/><path d=\"M8.5 12l2.5 2.5 4.5-5\"/></svg>",
+                "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"3\" y=\"4\" width=\"18\" height=\"12\" rx=\"2\"/><path d=\"M8 20h8M12 16v4\"/></svg>",
+                "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M4 5h16v11H9l-5 4z\"/><path d=\"M8 9.5h8M8 12.5h5\"/></svg>" };
+        }
+        @if (Model.Stats.Count > 0)
+        {
+            int si = 0;
+            foreach (var s in Model.Stats)
+            {
+                <div class="strip-item"><span class="strip-ic">@Html.Raw(stripIcons[si++ % 4])</span><div><strong>@s.Value</strong><span>@Pick(s.LabelEn, s.LabelBn, s.LabelEn)</span></div></div>
+            }
+        }
+        else
+        {
+            <div class="strip-item"><span class="strip-ic">@Html.Raw(stripIcons[0])</span><div><strong>@C.T("home.s01", "8 modules", "৮টা মডিউল")</strong><span>@C.T("home.063", "working together in one system", "এক সফটওয়্যারে, একসাথে কাজ করে")</span></div></div>
+            <div class="strip-item"><span class="strip-ic">@Html.Raw(stripIcons[1])</span><div><strong>@C.T("home.s02", "Tax & VAT", "আয়কর ও ভ্যাট")</strong><span>@C.T("home.064", "Bangladesh rules built in", "বাংলাদেশের নিয়ম আগে থেকেই যুক্ত")</span></div></div>
+            <div class="strip-item"><span class="strip-ic">@Html.Raw(stripIcons[2])</span><div><strong>@C.T("home.s03", "Any device", "যেকোনো ডিভাইসে")</strong><span>@C.T("home.065", "Runs in the browser — nothing to install", "ব্রাউজারেই চলে — কিছু ইনস্টল লাগে না")</span></div></div>
+            <div class="strip-item"><span class="strip-ic">@Html.Raw(stripIcons[3])</span><div><strong>@C.T("home.s04", "Bangla help", "বাংলায় সাহায্য")</strong><span>@C.T("home.066", "Guides and support in Bangla", "বাংলায় গাইড আর সাপোর্ট")</span></div></div>
+        }
+        </div>
+    </div>
+</div>
+
+<section id="modules">
+    <div class="wrap">
+        <div class="section-head">
+            <span class="eyebrow">@C.T("home.067", "Modules", "মডিউল")</span>
+            <h2>@C.T("home.068", "Everything a growing business runs on", "একটা প্রতিষ্ঠান চালাতে যা যা লাগে")</h2>
+            <p>@C.T("home.069", "Start with what you need today and add more later. The modules share one set of data, so nothing is entered twice.", "আজ যা দরকার তা দিয়ে শুরু করুন, পরে আরও যোগ করুন। সব মডিউল একই তথ্য ব্যবহার করে, তাই কোনো কিছু দুবার এন্ট্রি দিতে হয় না।")</p>
+        </div>
+        <div class="grid-4">
+            @{
+                // Modules saved in Admin → Modules; while none is saved, the built-in 8.
+                var shownModules = Model.Modules.Count > 0
+                    ? Model.Modules.Select(m => (m.Icon ?? "▣", Pick(m.NameEn, m.NameBn, m.NameEn), Pick(m.TextEn, m.TextBn, ""),
+                        Pick(m.PointsEn, m.PointsBn, "").Replace("\r", "").Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))).ToArray()
+                    : modules;
+            }
+            @foreach (var (icon, name, text, points) in shownModules)
+            {
+                <div class="card">
+                    <div class="icon" aria-hidden="true">@icon</div>
+                    <h3>@name</h3>
+                    <p>@text</p>
+                    @if (points.Length > 0) { <ul>@foreach (var p in points) { <li>@p</li> }</ul> }
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section-alt">
+    <div class="wrap">
+        <div class="section-head">
+            <span class="eyebrow">@C.T("home.070", "How it works", "কীভাবে কাজ করে")</span>
+            <h2>@C.T("home.071", "Enter once. Approve. The books update themselves.", "একবার এন্ট্রি। অনুমোদন। হিসাব নিজেই হালনাগাদ।")</h2>
+        </div>
+        <div class="grid-3 steps">
+            <div class="card step">
+                <h3>@C.T("home.072", "People do their own part", "প্রত্যেকে নিজের অংশ করেন")</h3>
+                <p>@C.T("home.073", "Employees apply for leave and request items; store keepers receive goods; sales staff raise invoices — each in their own screen.", "কর্মীরা ছুটি আর মালামাল চান, স্টোর কিপার মাল গ্রহণ করেন, বিক্রয়কর্মী Invoice করেন — প্রত্যেকে নিজের পাতায়।")</p>
+            </div>
+            <div class="card step">
+                <h3>@C.T("home.074", "Managers approve", "ব্যবস্থাপক অনুমোদন দেন")</h3>
+                <p>@C.T("home.075", "Set your own approval steps. Approvers get notified and sign digitally; every change is kept in the audit trail.", "নিজের মতো অনুমোদনের ধাপ ঠিক করুন। অনুমোদনকারী নোটিফিকেশন পান আর ডিজিটাল স্বাক্ষর দেন; প্রতিটা পরিবর্তন Audit Trail-এ থাকে।")</p>
+            </div>
+            <div class="card step">
+                <h3>@C.T("home.076", "Accounts post automatically", "হিসাব নিজে তৈরি হয়")</h3>
+                <p>@C.T("home.077", "Salaries, stock, purchases and sales post to the ledger by your rules. Profit, cash and dues are always up to date.", "বেতন, স্টক, ক্রয় আর বিক্রয় আপনার নিয়মে খাতায় চলে যায়। লাভ, নগদ আর বকেয়া সবসময় হালনাগাদ থাকে।")</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="features">
+    <div class="wrap split">
+        <div>
+            <span class="eyebrow">@C.T("home.078", "For owners and directors", "মালিক ও পরিচালকদের জন্য")</span>
+            <h2>@C.T("home.079", "See how the company is doing — on one page", "প্রতিষ্ঠান কেমন চলছে — এক পাতায়")</h2>
+            <p class="muted">@C.T("home.080", "Business Overview shows cash, profit, sales, dues, salary cost and stock, compared with last month, with alerts for what needs attention. Click any number to see the entries behind it.", "Business Overview দেখায় নগদ, লাভ, বিক্রি, বকেয়া, বেতন খরচ আর স্টক — গত মাসের সাথে তুলনাসহ, আর যেখানে নজর দরকার সেখানে সতর্কবার্তা। যেকোনো সংখ্যায় ক্লিক করলে তার পেছনের এন্ট্রি দেখা যায়।")</p>
+            <ul class="checks">
+                <li><span><b>@C.T("home.081", "Day-by-day or month-by-month charts", "দিনভিত্তিক বা মাসভিত্তিক চার্ট")</b> — @C.T("home.082", "sales, purchases, income and expense.", "বিক্রি, ক্রয়, আয় আর খরচ।")</span></li>
+                <li><span><b>@C.T("home.083", "Dues by age", "বয়স অনুযায়ী বকেয়া")</b> — @C.T("home.084", "who owes what, and for how long.", "কে কত বাকি রেখেছে, কত দিন ধরে।")</span></li>
+                <li><span><b>@C.T("home.085", "Alerts", "সতর্কবার্তা")</b> — @C.T("home.086", "negative cash, old dues, pending approvals, low stock.", "নগদ মাইনাস, পুরোনো বকেয়া, আটকে থাকা অনুমোদন, কম স্টক।")</span></li>
+            </ul>
+        </div>
+        <div class="grid-3" style="grid-template-columns:1fr 1fr">
+            <div class="card"><div class="icon">🔒</div><h3>@C.T("home.087", "Secure", "নিরাপদ")</h3><p>@C.T("home.088", "Separate database per company, role-based access, login protection and full audit trail.", "প্রতিষ্ঠানপ্রতি আলাদা ডাটাবেস, রোলভিত্তিক অনুমতি, লগইন সুরক্ষা আর পূর্ণ Audit Trail।")</p></div>
+            <div class="card"><div class="icon">✍️</div><h3>@C.T("home.089", "Digital signatures", "ডিজিটাল স্বাক্ষর")</h3><p>@C.T("home.090", "Approvers' signatures print on GRNs, issue slips and other documents.", "GRN, Issue স্লিপ আর অন্যান্য কাগজে অনুমোদনকারীর স্বাক্ষর নিজে বসে।")</p></div>
+            <div class="card"><div class="icon">📄</div><h3>@C.T("home.091", "Ready PDFs", "তৈরি PDF")</h3><p>@C.T("home.092", "Payslips, salary sheets, tax certificates, invoices and reports — print or email.", "Payslip, বেতনের শিট, কর সনদ, Invoice আর রিপোর্ট — প্রিন্ট বা ইমেইল।")</p></div>
+            <div class="card"><div class="icon">❓</div><h3>@C.T("home.093", "Help on every page", "প্রতিটা পাতায় সাহায্য")</h3><p>@C.T("home.094", "Press F1 for a step-by-step guide in Bangla with screenshots.", "F1 চাপলেই বাংলায় ধাপে ধাপে নির্দেশনা, ছবিসহ।")</p></div>
+        </div>
+    </div>
+</section>
+
+<section id="industries" class="section-alt">
+    <div class="wrap">
+        <div class="section-head">
+            <span class="eyebrow">@C.T("home.095", "Who it's for", "কাদের জন্য")</span>
+            <h2>@C.T("home.096", "Made for the way Bangladeshi organisations work", "বাংলাদেশের প্রতিষ্ঠানের কাজের ধারায় তৈরি")</h2>
+            <p>@C.T("home.097", "From a 20-person office to a group of companies with several branches.", "২০ জনের অফিস থেকে একাধিক শাখার গ্রুপ অব কোম্পানিজ পর্যন্ত।")</p>
+        </div>
+        <div class="grid-3">
+            <div class="card tile"><h3><span>🏭</span>@C.T("home.098", "Manufacturing", "উৎপাদন প্রতিষ্ঠান")</h3><p>@C.T("home.099", "Raw-material stores, requisitions from the floor, shift attendance and overtime, worker payroll.", "কাঁচামালের স্টোর, কারখানা থেকে Requisition, শিফট হাজিরা আর ওভারটাইম, শ্রমিকের বেতন।")</p></div>
+            <div class="card tile"><h3><span>🚚</span>@C.T("home.100", "Trading & distribution", "ট্রেডিং ও ডিস্ট্রিবিউশন")</h3><p>@C.T("home.101", "Purchases, VAT invoices, customer and supplier dues, several warehouses and stock transfers.", "ক্রয়, ভ্যাটসহ Invoice, Customer আর Supplier-এর বকেয়া, একাধিক গুদাম আর স্টক স্থানান্তর।")</p></div>
+            <div class="card tile"><h3><span>🏛️</span>@C.T("home.102", "Institutes & NGOs", "প্রতিষ্ঠান ও এনজিও")</h3><p>@C.T("home.103", "Staff records, leave, salary with tax and PF, fixed assets, budgets and approvals.", "কর্মীর তথ্য, ছুটি, কর আর PF-সহ বেতন, স্থায়ী সম্পদ, বাজেট আর অনুমোদন।")</p></div>
+            <div class="card tile"><h3><span>💼</span>@C.T("home.104", "Service companies", "সেবা প্রতিষ্ঠান")</h3><p>@C.T("home.105", "People, salaries and accounts in one place, with issue tracking for client and internal work.", "কর্মী, বেতন আর হিসাব এক জায়গায়, সাথে ক্লায়েন্ট আর অভ্যন্তরীণ কাজের টিকেট।")</p></div>
+            <div class="card tile"><h3><span>🏢</span>@C.T("home.106", "Groups & branches", "গ্রুপ ও শাখা")</h3><p>@C.T("home.107", "Each company in its own database; branch-wise employees, stores and reports.", "প্রতিটা কোম্পানি নিজস্ব ডাটাবেসে; শাখাভিত্তিক কর্মী, স্টোর আর রিপোর্ট।")</p></div>
+            <div class="card tile"><h3><span>📈</span>@C.T("home.108", "Growing SMEs", "বাড়ন্ত SME")</h3><p>@C.T("home.109", "Start with HR and payroll, add inventory or accounts as you grow — no new software to learn.", "এইচআর আর বেতন দিয়ে শুরু, বড় হলে স্টক বা হিসাব যোগ — নতুন সফটওয়্যার শিখতে হয় না।")</p></div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <div class="wrap">
+        <div class="section-head">
+            <span class="eyebrow">@C.T("home.110", "Bangladesh rules, built in", "বাংলাদেশের নিয়ম, আগে থেকেই যুক্ত")</span>
+            <h2>@C.T("home.111", "Compliance you don't have to work out yourself", "নিয়মকানুন নিজে হিসাব করতে হয় না")</h2>
+        </div>
+        <div class="grid-4">
+            <div class="card law"><div class="badge">TAX</div><div><h3>@C.T("home.112", "Income Tax Act 2023", "আয়কর আইন ২০২৩")</h3><p>@C.T("home.113", "Slabs, tax-free limits, investment rebate, minimum tax by zone, monthly TDS and yearly certificates.", "করের হার, করমুক্ত সীমা, বিনিয়োগ রেয়াত, এলাকাভিত্তিক ন্যূনতম কর, মাসিক TDS আর বার্ষিক সনদ।")</p></div></div>
+            <div class="card law"><div class="badge">VAT</div><div><h3>@C.T("home.114", "VAT & Mushak", "ভ্যাট ও মূসক")</h3><p>@C.T("home.115", "Tax codes on purchases and sales, VAT on invoices and Mushak 6.3 printouts.", "ক্রয়-বিক্রয়ে ট্যাক্স কোড, Invoice-এ ভ্যাট আর মূসক ৬.৩ প্রিন্ট।")</p></div></div>
+            <div class="card law"><div class="badge">LAB<br/>OUR</div><div><h3>@C.T("home.116", "Labour Act 2006", "শ্রম আইন ২০০৬")</h3><p>@C.T("home.117", "Leave types and balances, gratuity, final settlement and leave encashment.", "ছুটির ধরন ও বাকি, গ্র্যাচুইটি, চূড়ান্ত নিষ্পত্তি আর ছুটির নগদায়ন।")</p></div></div>
+            <div class="card law"><div class="badge">PF</div><div><h3>@C.T("home.118", "Provident Fund", "প্রভিডেন্ট ফান্ড")</h3><p>@C.T("home.119", "Employee and employer contributions, interest, statements and settlement.", "কর্মী আর প্রতিষ্ঠানের চাঁদা, মুনাফা, স্টেটমেন্ট আর নিষ্পত্তি।")</p></div></div>
+        </div>
+    </div>
+</section>
+
+@if (Model.Team.Count > 0)
+{
+<section id="team" class="section-alt">
+    <div class="wrap">
+        <div class="section-head">
+            <span class="eyebrow">@C.T("home.120", "Our team", "আমাদের টিম")</span>
+            <h2>@C.T("home.121", "The people behind Unifyx", "Unifyx-এর পেছনের মানুষগুলো")</h2>
+        </div>
+        <div class="team-grid">
+            @foreach (var t in Model.Team)
+            {
+                string name = Pick(t.NameEn, t.NameBn, t.NameEn);
+                string initials = string.Concat(t.NameEn.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(w => char.ToUpperInvariant(w[0])));
+                <div class="card team-card">
+                    @if (!string.IsNullOrEmpty(t.ImagePath))
+                    {
+                        <img class="team-photo" src="@t.ImagePath" alt="@name" loading="lazy" />
+                    }
+                    else
+                    {
+                        <div class="team-photo team-initials" aria-hidden="true">@initials</div>
+                    }
+                    <h3>@name</h3>
+                    <div class="team-role">@Pick(t.RoleEn, t.RoleBn, t.RoleEn)</div>
+                    @{ var bio = Pick(t.BioEn ?? "", t.BioBn, t.BioEn ?? ""); }
+                    @if (!string.IsNullOrWhiteSpace(bio)) { <p>@bio</p> }
+                    @if (!string.IsNullOrEmpty(t.LinkedIn))
+                    {
+                        <a class="team-in" href="@t.LinkedIn" target="_blank" rel="noopener" aria-label="LinkedIn — @name">in</a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</section>
+}
+
+<section class="@(Model.Team.Count > 0 ? "" : "section-alt")">
+    <div class="wrap">
+        <div class="section-head">
+            <span class="eyebrow">FAQ</span>
+            <h2>@C.T("home.122", "Common questions", "সাধারণ প্রশ্ন")</h2>
+        </div>
+        <div style="max-width:820px;margin:0 auto">
+        @if (Model.Faqs.Count > 0)
+        {
+            foreach (var f in Model.Faqs)
+            {
+                <details class="faq"><summary>@Pick(f.QuestionEn, f.QuestionBn, f.QuestionEn)</summary>@TextFormat.Paragraphs(Pick(f.AnswerEn, f.AnswerBn, f.AnswerEn))</details>
+            }
+        }
+        else
+        {
+            <details class="faq"><summary>@C.T("home.123", "Is our data safe?", "আমাদের তথ্য কি নিরাপদ?")</summary>
+                <p>@C.T("home.124", "Each company has its own database. Access depends on each person's role, logins are protected against guessing, and every change is recorded. Backups are taken daily.", "প্রতিটা প্রতিষ্ঠানের নিজস্ব ডাটাবেস। কে কী দেখবেন তা রোল অনুযায়ী ঠিক হয়, অনুমান করে লগইনের চেষ্টা আটকানো হয়, আর প্রতিটা পরিবর্তন রেকর্ড থাকে। প্রতিদিন backup নেওয়া হয়।")</p></details>
+            <details class="faq"><summary>@C.T("home.125", "Can we bring our existing data?", "পুরোনো তথ্য কি আনা যাবে?")</summary>
+                <p>@C.T("home.126", "Yes. Employees, opening balances, items and assets can be imported from Excel during setup.", "হ্যাঁ। সেটআপের সময় Excel থেকে কর্মচারী, Opening Balance, পণ্য আর সম্পদ আনা যায়।")</p></details>
+            <details class="faq"><summary>@C.T("home.127", "Do we have to take all modules?", "সব মডিউল কি নিতে হবে?")</summary>
+                <p>@C.T("home.128", "No. Take only what you need — for example HR and Payroll — and add Inventory or Accounts later. Your data carries over.", "না। শুধু যা দরকার তা নিন — যেমন এইচআর আর বেতন — পরে Inventory বা Accounts যোগ করুন। আগের তথ্য থেকে যায়।")</p></details>
+            <details class="faq"><summary>@C.T("home.129", "Do you provide training?", "প্রশিক্ষণ দেবেন কি?")</summary>
+                <p>@C.T("home.130", "Yes. We set up your company, train your team, and every page has a help guide in Bangla.", "হ্যাঁ। আমরা আপনার প্রতিষ্ঠান সেটআপ করে দিই, কর্মীদের প্রশিক্ষণ দিই, আর প্রতিটা পাতায় বাংলায় সাহায্য আছে।")</p></details>
+        }
+        </div>
+    </div>
+</section>
+
+@if (Model.News.Count > 0)
+{
+<section id="news">
+    <div class="wrap">
+        <div class="section-head">
+            <span class="eyebrow">@C.T("home.131", "News", "খবর")</span>
+            <h2>@C.T("home.132", "Latest updates", "সর্বশেষ খবর")</h2>
+        </div>
+        <div class="grid-3">
+            @foreach (var n in Model.News)
+            {
+                <a class="card news-card" href="@L.Url("News/Details/" + n.Id)">
+                    @if (!string.IsNullOrEmpty(n.ImagePath)) { <img src="@n.ImagePath" alt="" loading="lazy" /> }
+                    <small class="muted">@n.PublishedOn.ToString("dd MMM yyyy")</small>
+                    <h3>@Pick(n.TitleEn, n.TitleBn, n.TitleEn)</h3>
+                </a>
+            }
+        </div>
+        <p style="text-align:center;margin-top:24px"><a href="@L.Url("News")">@C.T("home.133", "All news →", "সব খবর →")</a></p>
+    </div>
+</section>
+}
+
+<section>
+    <div class="wrap">
+        <div class="cta">
+            <h2>@C.T("home.134", "See Unifyx ERP with your own process", "নিজের কাজের ধারায় Unifyx ERP দেখুন")</h2>
+            <p>@C.T("home.135", "Book a free demo. We'll show the modules that matter to you.", "ফ্রি ডেমোর সময় নিন। আপনার দরকারি মডিউলগুলোই দেখাব।")</p>
+            <div class="hero-cta">
+                @if (!string.IsNullOrEmpty(site.WhatsApp))
+                {
+                    <a class="btn btn-lg btn-whatsapp" href="https://wa.me/@site.WhatsApp" target="_blank" rel="noopener">WhatsApp</a>
+                }
+                <a class="btn btn-light btn-lg" href="@L.Url("Contact")">@C.T("home.136", "Request a demo", "ডেমো দেখুন")</a>
+                <a class="btn btn-ghost btn-lg" style="background:transparent;color:#fff;border-color:#4b6a96" href="@L.Url("Pricing")">@C.T("home.137", "See packages", "প্যাকেজ দেখুন")</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+// Hero screen leans gently toward the mouse (off when the visitor prefers less motion).
+(function () {
+    var stage = document.getElementById('mockStage'), tilt = document.getElementById('mockTilt');
+    if (!stage || !tilt || window.matchMedia('(prefers-reduced-motion: reduce)').matches || window.matchMedia('(hover: none)').matches) return;
+    stage.addEventListener('mousemove', function (e) {
+        var r = stage.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width - 0.5, y = (e.clientY - r.top) / r.height - 0.5;
+        tilt.style.setProperty('--ry', (-14 + x * 12).toFixed(2) + 'deg');
+        tilt.style.setProperty('--rx', (7 - y * 10).toFixed(2) + 'deg');
+    });
+    stage.addEventListener('mouseleave', function () { tilt.style.removeProperty('--ry'); tilt.style.removeProperty('--rx'); });
+})();
+</script>
+}

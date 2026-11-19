@@ -1,0 +1,7 @@
+@page
+@{
+    ViewData["Title"] = L.T("Something went wrong", "কিছু একটা সমস্যা হয়েছে");
+}
+<div class="page-head"><div class="wrap"><h1>@ViewData["Title"]</h1>
+    <p class="muted">@L.T("Please try again in a moment.", "একটু পরে আবার চেষ্টা করুন।")</p>
+    <a class="btn btn-primary" href="@L.Url()">@L.T("Back to home", "হোম পাতায় ফিরুন")</a></div></div>

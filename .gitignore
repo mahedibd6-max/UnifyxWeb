@@ -1,0 +1,34 @@
+# Build output
+bin/
+obj/
+publish/
+*.pdb
+
+# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.rsuser
+
+# Local publish settings (contain local folder paths)
+**/Properties/PublishProfiles/
+
+# Files uploaded through the admin panel (team photos, news images …)
+UnifyxWeb/wwwroot/uploads/*
+!UnifyxWeb/wwwroot/uploads/site/
+UnifyxWeb/wwwroot/uploads/site/*
+!UnifyxWeb/wwwroot/uploads/site/.gitkeep
+
+# Secrets and local settings — never commit these
+appsettings.*.local.json
+appsettings.Production.json
+secrets.json
+*.pfx
+*.key
+.env
+
+# Logs
+logs/
+*.log

@@ -1,0 +1,26 @@
+@page
+@{
+    ViewData["Title"] = C.T("terms.001", "Terms of Service", "ব্যবহারের শর্তাবলি");
+}
+<div class="page-head"><div class="wrap"><h1>@ViewData["Title"]</h1>
+    <p class="muted">@C.T("terms.002", "Draft — to be reviewed before publishing.", "খসড়া — প্রকাশের আগে পর্যালোচনা করা হবে।")</p></div></div>
+<section><div class="wrap prose">
+    @if (L.IsBangla)
+    {
+        <h2>সেবা</h2><p>Unifyx ERP একটা ওয়েবভিত্তিক সফটওয়্যার সেবা। চুক্তিতে উল্লেখিত মডিউল আর ব্যবহারকারীর সীমা অনুযায়ী সেবা দেওয়া হয়।</p>
+        <h2>অ্যাকাউন্ট</h2><p>প্রতিষ্ঠান তার ব্যবহারকারীদের লগইন আর পাসওয়ার্ডের গোপনীয়তার জন্য দায়ী।</p>
+        <h2>পেমেন্ট</h2><p>মাসিক বা বার্ষিক ফি অগ্রিম দিতে হয়। পেমেন্ট বাকি থাকলে নোটিশ দিয়ে সেবা সাময়িক বন্ধ রাখা যেতে পারে।</p>
+        <h2>তথ্যের মালিকানা</h2><p>আপনার এন্ট্রি দেওয়া সব তথ্যের মালিক আপনার প্রতিষ্ঠান।</p>
+        <h2>দায়ের সীমা</h2><p>আমরা যুক্তিসংগতভাবে সেবা চালু রাখার চেষ্টা করি। পরোক্ষ ক্ষতির জন্য দায় চুক্তিতে নির্ধারিত সীমার মধ্যে থাকবে।</p>
+        <h2>পরিবর্তন</h2><p>শর্তাবলি পরিবর্তন হলে আগে থেকে জানানো হবে।</p>
+    }
+    else
+    {
+        <h2>The service</h2><p>Unifyx ERP is a web-based software service, provided for the modules and user limits in your agreement.</p>
+        <h2>Accounts</h2><p>Your company is responsible for keeping its users' logins and passwords private.</p>
+        <h2>Payment</h2><p>Monthly or yearly fees are paid in advance. If payment is overdue, the service may be paused after notice.</p>
+        <h2>Your data</h2><p>All data your company enters belongs to your company.</p>
+        <h2>Limits</h2><p>We make reasonable efforts to keep the service available. Liability is limited as set out in your agreement.</p>
+        <h2>Changes</h2><p>We will give notice before these terms change.</p>
+    }
+</div></section>

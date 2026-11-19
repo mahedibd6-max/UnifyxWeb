@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>@ViewData["Title"] · Website Admin</title>
+    <link rel="icon" href="/img/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+</head>
+<body class="admin">
+    <header class="admin-top">
+        <a class="brand brand-light" href="/admin"><img src="/img/favicon.svg" alt="" width="30" height="30" /><span>Unifyx <b>Admin</b></span></a>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <nav class="admin-nav">
+                <a href="/admin">Dashboard</a>
+                <a href="/admin/demorequests">Demo requests</a>
+                <a href="/admin/home">Home page</a>
+                <a href="/admin/texts">Texts</a>
+                <a href="/admin/products">Products</a>
+                <a href="/admin/modules">Modules</a>
+                <a href="/admin/news">News</a>
+                <a href="/admin/popups">Pop-ups</a>
+                <a href="/admin/team">Team</a>
+                <a href="/admin/faqs">FAQ</a>
+                <a href="/admin/settings">Contact &amp; links</a>
+                <a href="/en" target="_blank" rel="noopener">View site ↗</a>
+                <form method="post" asp-page="/Admin/Logout" class="inline">
+                    <button class="btn btn-ghost btn-sm" type="submit">Log out</button>
+                </form>
+            </nav>
+        }
+    </header>
+    <main class="admin-main">
+        @RenderBody()
+    </main>
+</body>
+</html>

@@ -1,0 +1,43 @@
+@page
+@model UnifyxWeb.Pages.Admin.HomeModel
+@{ ViewData["Title"] = "Home page"; }
+<h2>Home page</h2>
+<p class="muted">Leave a box empty to keep the built-in text. Bangla boxes are optional — empty ones show the English.</p>
+@if (Model.Saved != null) { <div class="ok-msg">@Model.Saved</div> }
+<form method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="All" class="validation-summary-errors"></div>
+    <div class="panel">
+        <h3>Top of the page</h3>
+        <div class="form-grid">
+            <div class="field"><label asp-for="Input.EyebrowEn">Small label (English)</label><input asp-for="Input.EyebrowEn" placeholder="ERP built for Bangladesh" /></div>
+            <div class="field"><label asp-for="Input.EyebrowBn">Small label (বাংলা)</label><input asp-for="Input.EyebrowBn" placeholder="বাংলাদেশের জন্য তৈরি ERP" /></div>
+            <div class="field"><label asp-for="Input.TitleEn">Big title (English)</label><input asp-for="Input.TitleEn" placeholder="HR, Payroll, Inventory & Accounts — one system." /></div>
+            <div class="field"><label asp-for="Input.TitleBn">Big title (বাংলা)</label><input asp-for="Input.TitleBn" placeholder="এইচআর, বেতন, স্টক আর হিসাব — এক সফটওয়্যারে।" /></div>
+            <div class="field"><label asp-for="Input.LeadEn">Text under the title (English)</label><textarea asp-for="Input.LeadEn" rows="4"></textarea></div>
+            <div class="field"><label asp-for="Input.LeadBn">Text under the title (বাংলা)</label><textarea asp-for="Input.LeadBn" rows="4"></textarea></div>
+        </div>
+    </div>
+    <div class="panel">
+        <h3>Picture beside the title</h3>
+        <p class="muted">For example a screenshot of the software. JPG, PNG or WebP, up to 3 MB; about 1200 × 800 looks best. Without a picture the drawn sample screen is shown.</p>
+        @if (!string.IsNullOrEmpty(Model.Input.HeroImagePath))
+        {
+            <img src="@Model.Input.HeroImagePath" alt="" style="max-width:360px;border-radius:10px;border:1px solid var(--line);margin-bottom:.8rem" />
+            <div><label><input type="checkbox" asp-for="RemoveImage" /> Remove this picture (show the sample screen)</label></div>
+        }
+        <div class="field" style="margin-top:.8rem"><label asp-for="HeroImage">Upload a new picture</label><input asp-for="HeroImage" type="file" accept=".jpg,.jpeg,.png,.webp" /></div>
+    </div>
+    <div class="panel">
+        <h3>Four numbers under the top</h3>
+        <p class="muted">For example "50+" and "companies use it". Leave all of them empty to keep the built-in numbers.</p>
+        @for (int i = 0; i < Model.Stats.Count; i++)
+        {
+            <div class="form-grid" style="grid-template-columns:1fr 2fr 2fr;margin-bottom:.6rem">
+                <div class="field"><label>Number @(i + 1)</label><input asp-for="Stats[i].Value" placeholder="8" /></div>
+                <div class="field"><label>Text (English)</label><input asp-for="Stats[i].LabelEn" placeholder="integrated modules" /></div>
+                <div class="field"><label>Text (বাংলা)</label><input asp-for="Stats[i].LabelBn" placeholder="যুক্ত মডিউল" /></div>
+            </div>
+        }
+    </div>
+    <button class="btn btn-primary" type="submit">Save</button>
+</form>

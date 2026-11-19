@@ -1,0 +1,60 @@
+@page
+@model UnifyxWeb.Pages.Admin.DemoRequestsModel
+@{ ViewData["Title"] = "Demo requests"; }
+<h2>Demo requests</h2>
+<p class="muted">Sent from the "Request a demo" form on the Contact page. Mark a request as contacted after you call.</p>
+@if (!Model.MailSetUp)
+{
+    <div class="err-msg">Email alerts are off: new requests only show here. To get an email for each one, fill the <b>Smtp</b> settings (see the guide).</div>
+}
+@if (Model.Saved != null) { <div class="ok-msg">@Model.Saved</div> }
+
+<div class="dr-tabs">
+    <a class="@(Model.Show == "new" ? "on" : "")" href="?show=new">New (@Model.NewCount)</a>
+    <a class="@(Model.Show == "all" ? "on" : "")" href="?show=all">All (@Model.AllCount)</a>
+</div>
+
+@if (Model.Items.Count == 0)
+{
+    <div class="panel"><p class="muted" style="margin:0">@(Model.Show == "new" ? "No new requests." : "No requests yet.")</p></div>
+}
+@foreach (var r in Model.Items)
+{
+    var mods = string.IsNullOrEmpty(r.Modules) ? Array.Empty<string>() : r.Modules.Split(',');
+    <div class="panel dr-item @(r.Contacted ? "done" : "") @(Model.Open == r.Id ? "opened" : "")" id="r@(r.Id)">
+        <div class="dr-head">
+            <div>
+                <h3>@r.Company</h3>
+                <div class="muted">@r.Name · @r.CreatedAt.ToString("dd MMM yyyy, h:mm tt") · @(r.Language == "bn" ? "বাংলা" : "English")</div>
+            </div>
+            <span class="dr-badge @(r.Contacted ? "ok" : "new")">@(r.Contacted ? "Contacted" : "New")</span>
+        </div>
+        <div class="dr-contact">
+            <a class="btn btn-ghost btn-sm" href="tel:@r.Phone">📞 @r.Phone</a>
+            <a class="btn btn-ghost btn-sm" href="https://wa.me/@UnifyxWeb.Pages.Admin.DemoRequestsModel.WhatsAppNumber(r.Phone)" target="_blank" rel="noopener">WhatsApp</a>
+            @if (!string.IsNullOrEmpty(r.Email)) { <a class="btn btn-ghost btn-sm" href="mailto:@r.Email">✉ @r.Email</a> }
+        </div>
+        <dl class="dr-facts">
+            <div><dt>Employees</dt><dd>@(r.Employees ?? "—")</dd></div>
+            <div><dt>Modules</dt><dd>@if (mods.Length == 0) { <span>—</span> } @foreach (var m in mods) { <span class="dr-mod">@m</span> }</dd></div>
+        </dl>
+        @if (!string.IsNullOrEmpty(r.Message)) { <div class="dr-msg">@r.Message</div> }
+
+        <form method="post" asp-page-handler="Note" asp-route-id="@r.Id" asp-route-show="@Model.Show" class="dr-note">
+            <label for="note@(r.Id)">Your note (only you see this)</label>
+            <div class="dr-note-row">
+                <input id="note@(r.Id)" name="note" value="@r.AdminNote" maxlength="1000" placeholder="e.g. Called on Sunday, demo fixed for Tuesday 11 am" />
+                <button class="btn btn-ghost btn-sm" type="submit">Save note</button>
+            </div>
+        </form>
+
+        <div class="dr-actions">
+            <form method="post" asp-page-handler="Contacted" asp-route-id="@r.Id" asp-route-value="@(!r.Contacted)" asp-route-show="@Model.Show" class="inline">
+                <button class="btn @(r.Contacted ? "btn-ghost" : "btn-primary") btn-sm" type="submit">@(r.Contacted ? "Move back to new" : "Mark as contacted")</button>
+            </form>
+            <form method="post" asp-page-handler="Delete" asp-route-id="@r.Id" asp-route-show="@Model.Show" class="inline" onsubmit="return confirm('Delete this request?')">
+                <button class="btn btn-ghost btn-sm" type="submit">Delete</button>
+            </form>
+        </div>
+    </div>
+}

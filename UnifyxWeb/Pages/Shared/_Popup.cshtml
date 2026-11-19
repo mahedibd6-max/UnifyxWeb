@@ -1,0 +1,37 @@
+@inject PopupService Popups
+@{
+    var p = Popups.Current();
+    if (p == null) { return; }
+    string title = L.IsBangla && !string.IsNullOrWhiteSpace(p.TitleBn) ? p.TitleBn! : p.TitleEn;
+    string? text = L.IsBangla && !string.IsNullOrWhiteSpace(p.TextBn) ? p.TextBn : p.TextEn;
+    string? linkText = L.IsBangla && !string.IsNullOrWhiteSpace(p.LinkTextBn) ? p.LinkTextBn : p.LinkTextEn;
+    // A visitor who closes it won't see it again until the pop-up is changed.
+    string key = "ux-popup-" + p.Id + "-" + p.UpdatedAt.Ticks;
+}
+<div class="popup-backdrop" id="uxPopup" data-key="@key" hidden>
+    <div class="popup" role="dialog" aria-modal="true" aria-labelledby="uxPopupTitle">
+        <button class="popup-close" type="button" aria-label="@C.T("popup.001", "Close", "বন্ধ")">×</button>
+        @if (!string.IsNullOrEmpty(p.ImagePath)) { <img src="@p.ImagePath" alt="" /> }
+        <div class="popup-body">
+            <h3 id="uxPopupTitle">@title</h3>
+            @TextFormat.Paragraphs(text)
+            @if (!string.IsNullOrEmpty(p.LinkUrl))
+            {
+                <a class="btn btn-primary" href="@p.LinkUrl">@(string.IsNullOrWhiteSpace(linkText) ? C.T("popup.002", "Learn more", "বিস্তারিত") : linkText)</a>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    (function () {
+        var box = document.getElementById('uxPopup'); if (!box) return;
+        var key = box.dataset.key, seen = false;
+        try { seen = localStorage.getItem(key) === '1'; } catch (e) { }
+        if (seen) return;
+        function close() { box.hidden = true; try { localStorage.setItem(key, '1'); } catch (e) { } }
+        setTimeout(function () { box.hidden = false; }, 1200);
+        box.querySelector('.popup-close').addEventListener('click', close);
+        box.addEventListener('click', function (e) { if (e.target === box) close(); });
+        document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !box.hidden) close(); });
+    })();
+</script>

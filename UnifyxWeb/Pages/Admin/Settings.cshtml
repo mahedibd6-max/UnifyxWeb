@@ -1,0 +1,25 @@
+@page
+@model UnifyxWeb.Pages.Admin.SettingsModel
+@{ ViewData["Title"] = "Contact & links"; }
+<h2>Contact details &amp; links</h2>
+<p class="muted">Leave a box empty to use the default from appsettings.json. An empty social link hides its icon.</p>
+@if (Model.Saved != null) { <div class="ok-msg">@Model.Saved</div> }
+<form method="post" class="panel">
+    <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+    <div class="form-grid">
+        <div class="field"><label asp-for="Input.Phone">Phone</label><input asp-for="Input.Phone" placeholder="+880 1712-345678" /><span asp-validation-for="Input.Phone" class="field-error"></span></div>
+        <div class="field"><label asp-for="Input.Email">Email</label><input asp-for="Input.Email" placeholder="info@unifyxerp.com" /><span asp-validation-for="Input.Email" class="field-error"></span></div>
+        <div class="field"><label asp-for="Input.AddressEn">Address (English)</label><input asp-for="Input.AddressEn" /></div>
+        <div class="field"><label asp-for="Input.AddressBn">Address (বাংলা)</label><input asp-for="Input.AddressBn" /></div>
+        <div class="field"><label asp-for="Input.WhatsApp">WhatsApp number</label><input asp-for="Input.WhatsApp" placeholder="8801712345678" /><div class="hint">Digits only, with country code.</div><span asp-validation-for="Input.WhatsApp" class="field-error"></span></div>
+        <div class="field"><label asp-for="Input.Facebook">Facebook page link</label><input asp-for="Input.Facebook" type="text" placeholder="www.facebook.com/yourpage" /><span asp-validation-for="Input.Facebook" class="field-error"></span></div>
+        <div class="field"><label asp-for="Input.LinkedIn">LinkedIn link</label><input asp-for="Input.LinkedIn" type="text" placeholder="www.linkedin.com/company/..." /><div class="hint">https:// is added for you.</div><span asp-validation-for="Input.LinkedIn" class="field-error"></span></div>
+        <div class="field" style="grid-column:1/-1">
+            <label asp-for="Input.LoginUrl">"Login" button link (the ERP)</label>
+            <input asp-for="Input.LoginUrl" type="text" placeholder="app.unifyxerp.com" />
+            <div class="hint">Where the <b>Login</b> button in the menu goes. Empty = <code>@ViewData["DefaultLogin"]</code> (from appsettings). https:// is added for you.</div>
+            <span asp-validation-for="Input.LoginUrl" class="field-error"></span>
+        </div>
+    </div>
+    <button class="btn btn-primary" style="margin-top:1.2rem" type="submit">Save</button>
+</form>

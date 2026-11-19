@@ -1,0 +1,52 @@
+@page
+@model UnifyxWeb.Pages.Admin.TeamModel
+@{ ViewData["Title"] = "Our team"; }
+<h2>Our team</h2>
+<p class="muted">People shown in "Our team" on the home page, in this order. While nobody is added (or all are hidden), the section doesn't show.</p>
+@if (Model.Saved != null) { <div class="ok-msg">@Model.Saved</div> }
+<div class="panel">
+    @if (Model.Items.Count == 0) { <p class="muted">Nobody added yet.</p> }
+    @foreach (var t in Model.Items)
+    {
+        <div style="display:flex;justify-content:space-between;gap:1rem;align-items:center;border-bottom:1px solid var(--line);padding:.6rem 0">
+            <div style="display:flex;gap:.8rem;align-items:center">
+                @if (!string.IsNullOrEmpty(t.ImagePath)) { <img src="@t.ImagePath" alt="" style="width:44px;height:44px;border-radius:8px;border:2px solid var(--blue);object-fit:cover;object-position:center 20%" /> }
+                <div><b>@t.SortOrder.</b> @t.NameEn <span class="muted">· @t.RoleEn</span> @if (!t.IsActive) { <span class="muted">(hidden)</span> }</div>
+            </div>
+            <div style="display:flex;gap:.5rem">
+                <a class="btn btn-ghost btn-sm" href="?edit=@t.Id">Edit</a>
+                <form method="post" asp-page-handler="Delete" asp-route-id="@t.Id" class="inline" onsubmit="return confirm('Remove this person?')">
+                    <button class="btn btn-ghost btn-sm" type="submit">Delete</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+<form method="post" asp-page-handler="Save" enctype="multipart/form-data" class="panel">
+    <h3>@(Model.Input.Id == 0 ? "Add a person" : "Change person")</h3>
+    <input type="hidden" asp-for="Input.Id" />
+    <div asp-validation-summary="All" class="validation-summary-errors"></div>
+    <div class="form-grid">
+        <div class="field"><label asp-for="Input.NameEn">Name (English)</label><input asp-for="Input.NameEn" /></div>
+        <div class="field"><label asp-for="Input.NameBn">Name (বাংলা)</label><input asp-for="Input.NameBn" /></div>
+        <div class="field"><label asp-for="Input.RoleEn">Position (English)</label><input asp-for="Input.RoleEn" placeholder="Managing Director" /></div>
+        <div class="field"><label asp-for="Input.RoleBn">Position (বাংলা)</label><input asp-for="Input.RoleBn" placeholder="ব্যবস্থাপনা পরিচালক" /></div>
+        <div class="field"><label asp-for="Input.BioEn">One or two lines about them (English, optional)</label><textarea asp-for="Input.BioEn" rows="3" maxlength="300"></textarea></div>
+        <div class="field"><label asp-for="Input.BioBn">One or two lines (বাংলা, optional)</label><textarea asp-for="Input.BioBn" rows="3" maxlength="300"></textarea></div>
+        <div class="field"><label asp-for="Input.LinkedIn">LinkedIn link (optional)</label><input asp-for="Input.LinkedIn" type="text" placeholder="linkedin.com/in/your-name" /></div>
+        <div class="field"><label asp-for="Input.SortOrder">Order</label><input asp-for="Input.SortOrder" /><div class="hint">1 shows first.</div></div>
+        <div class="field">
+            <label asp-for="Image">Photo</label>
+            @if (!string.IsNullOrEmpty(Model.Input.ImagePath))
+            {
+                <img src="@Model.Input.ImagePath" alt="" style="width:110px;height:110px;border-radius:8px;border:2px solid var(--blue);object-fit:cover;object-position:center 20%;margin-bottom:.4rem" />
+                <div><label><input type="checkbox" asp-for="RemoveImage" /> Remove photo</label></div>
+            }
+            <input asp-for="Image" type="file" accept=".jpg,.jpeg,.png,.webp" />
+            <div class="hint">JPG, PNG or WebP, up to 3 MB. A square or upright photo with the face near the top looks best. Without a photo, the initials show.</div>
+        </div>
+        <div class="field"><label><input type="checkbox" asp-for="Input.IsActive" /> Show on the website</label></div>
+    </div>
+    <button class="btn btn-primary" type="submit" style="margin-top:1rem">Save</button>
+    @if (Model.Input.Id != 0) { <a class="btn btn-ghost" href="/admin/team" style="margin-top:1rem">Cancel</a> }
+</form>

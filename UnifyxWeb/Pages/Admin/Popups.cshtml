@@ -1,0 +1,51 @@
+@page
+@model UnifyxWeb.Pages.Admin.PopupsModel
+@{ ViewData["Title"] = "Pop-ups"; var today = DateTime.Today; }
+<h2>Pop-ups</h2>
+<p class="muted">A pop-up shows once to each visitor between its start and end dates. If several are on, the newest one shows.</p>
+@if (Model.Saved != null) { <div class="ok-msg">@Model.Saved</div> }
+<div class="panel">
+    @if (Model.Items.Count == 0) { <p class="muted">No pop-ups yet.</p> }
+    @foreach (var p in Model.Items)
+    {
+        bool live = p.IsActive && p.StartDate <= today && p.EndDate >= today;
+        <div style="display:flex;justify-content:space-between;gap:1rem;align-items:center;border-bottom:1px solid var(--line);padding:.6rem 0">
+            <div>@p.TitleEn <span class="muted">· @p.StartDate.ToString("dd MMM") – @p.EndDate.ToString("dd MMM yyyy")</span>
+                <b style="color:@(live ? "var(--green)" : "var(--ink-2)")">@(live ? " · showing now" : p.IsActive ? " · not in date range" : " · off")</b></div>
+            <div style="display:flex;gap:.5rem">
+                <a class="btn btn-ghost btn-sm" href="?edit=@p.Id">Edit</a>
+                <form method="post" asp-page-handler="Delete" asp-route-id="@p.Id" class="inline" onsubmit="return confirm('Delete this pop-up?')">
+                    <button class="btn btn-ghost btn-sm" type="submit">Delete</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+<form method="post" asp-page-handler="Save" enctype="multipart/form-data" class="panel">
+    <h3>@(Model.Input.Id == 0 ? "New pop-up" : "Change pop-up")</h3>
+    <input type="hidden" asp-for="Input.Id" />
+    <div asp-validation-summary="All" class="validation-summary-errors"></div>
+    <div class="form-grid">
+        <div class="field"><label asp-for="Input.TitleEn">Title (English)</label><input asp-for="Input.TitleEn" placeholder="New Year offer: 20% off" /></div>
+        <div class="field"><label asp-for="Input.TitleBn">Title (বাংলা)</label><input asp-for="Input.TitleBn" /></div>
+        <div class="field"><label asp-for="Input.TextEn">Text (English)</label><textarea asp-for="Input.TextEn" rows="3"></textarea></div>
+        <div class="field"><label asp-for="Input.TextBn">Text (বাংলা)</label><textarea asp-for="Input.TextBn" rows="3"></textarea></div>
+        <div class="field"><label asp-for="Input.LinkUrl">Button link (optional)</label><input asp-for="Input.LinkUrl" placeholder="/en/Contact" /><div class="hint">A page of this site (/en/Contact) or a web address.</div></div>
+        <div class="field"><label asp-for="Input.LinkTextEn">Button text (English / বাংলা)</label>
+            <div style="display:flex;gap:.5rem"><input asp-for="Input.LinkTextEn" placeholder="Book a demo" /><input asp-for="Input.LinkTextBn" placeholder="ডেমো দেখুন" /></div></div>
+        <div class="field"><label asp-for="Input.StartDate">Start date</label><input asp-for="Input.StartDate" type="date" /></div>
+        <div class="field"><label asp-for="Input.EndDate">End date</label><input asp-for="Input.EndDate" type="date" /><span asp-validation-for="Input.EndDate" class="field-error"></span></div>
+        <div class="field"><label><input type="checkbox" asp-for="Input.IsActive" /> On</label></div>
+        <div class="field">
+            <label asp-for="Image">Picture (optional)</label>
+            @if (!string.IsNullOrEmpty(Model.Input.ImagePath))
+            {
+                <img src="@Model.Input.ImagePath" alt="" style="max-width:220px;border-radius:8px;margin-bottom:.4rem" />
+                <div><label><input type="checkbox" asp-for="RemoveImage" /> Remove picture</label></div>
+            }
+            <input asp-for="Image" type="file" accept=".jpg,.jpeg,.png,.webp" />
+        </div>
+    </div>
+    <button class="btn btn-primary" type="submit" style="margin-top:1rem">Save</button>
+    @if (Model.Input.Id != 0) { <a class="btn btn-ghost" href="/admin/popups" style="margin-top:1rem">Cancel</a> }
+</form>

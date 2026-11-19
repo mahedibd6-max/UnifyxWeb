@@ -1,0 +1,13 @@
+@page
+@model UnifyxWeb.Pages.Admin.LoginModel
+@{ ViewData["Title"] = "Log in"; }
+<div class="panel login-box">
+    <h2>Website admin</h2>
+    <p class="muted">Log in to change contact details, news and pop-ups.</p>
+    @if (Model.Error != null) { <div class="err-msg">@Model.Error</div> }
+    <form method="post">
+        <div class="field"><label asp-for="Email">Email</label><input asp-for="Email" autocomplete="username" /><span asp-validation-for="Email" class="field-error"></span></div>
+        <div class="field" style="margin-top:1rem"><label asp-for="Password">Password</label><input asp-for="Password" autocomplete="current-password" /><span asp-validation-for="Password" class="field-error"></span></div>
+        <button class="btn btn-primary" style="margin-top:1.2rem;width:100%;justify-content:center" type="submit">Log in</button>
+    </form>
+</div>

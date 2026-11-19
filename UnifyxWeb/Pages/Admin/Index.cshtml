@@ -1,0 +1,78 @@
+@page
+@model UnifyxWeb.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+    int max = Math.Max(1, Model.Last30.Max(x => x.Visitors));
+    int maxPage = Model.TopPages.Count == 0 ? 1 : Model.TopPages.Max(x => x.Views);
+    string Change(int now, int before) => before == 0 ? "" : (now >= before ? "▲ " : "▼ ") + Math.Abs((now - before) * 100 / before) + "%";
+}
+<h2>Website dashboard</h2>
+<p class="muted">Signed in as @User.Identity?.Name</p>
+<div class="stat-row">
+    <a class="panel" href="/admin/news" style="text-decoration:none"><span class="muted">Published news</span><strong>@Model.News</strong></a>
+    <a class="panel" href="/admin/popups" style="text-decoration:none"><span class="muted">Pop-ups showing now</span><strong>@Model.ActivePopups</strong></a>
+    <a class="panel" href="/admin/demorequests" style="text-decoration:none"><span class="muted">New demo requests</span><strong>@Model.NewRequests</strong></a>
+</div>
+
+<div class="panel">
+    <div class="vc-head">
+        <h3 style="margin:0">Visitors</h3>
+        <span class="muted">@(Model.Since is DateTime s ? "Counting since " + s.ToString("dd MMM yyyy") : "Counting starts with the first visit")</span>
+    </div>
+    <div class="vc-cards">
+        <div class="vc-card hot">
+            <span>Today</span><b>@Model.Today.Visitors</b>
+            <small>@Model.Today.Views page views · @Model.Today.NewVisitors new</small>
+            @if (Change(Model.Today.Visitors, Model.Yesterday.Visitors) is var c && c != "") { <em class="@(c.StartsWith("▲") ? "up" : "down")">@c vs yesterday</em> }
+        </div>
+        <div class="vc-card"><span>Yesterday</span><b>@Model.Yesterday.Visitors</b><small>@Model.Yesterday.Views page views</small></div>
+        <div class="vc-card"><span>Last 7 days</span><b>@Model.Last7.Visitors</b><small>@Model.Last7.Views page views</small></div>
+        <div class="vc-card"><span>This month</span><b>@Model.ThisMonth.Visitors</b><small>@Model.ThisMonth.Views page views · @Model.ThisMonth.NewVisitors new</small></div>
+        <div class="vc-card"><span>All time</span><b>@Model.AllTime.Visitors</b><small>@Model.AllTime.Views page views · @Model.AllTime.NewVisitors first-time</small></div>
+    </div>
+
+    <h4 class="vc-sub">Visitors per day — last 30 days</h4>
+    <div class="vc-chart" role="img" aria-label="Visitors per day for the last 30 days">
+        @foreach (var d in Model.Last30)
+        {
+            var h = d.Visitors * 100 / max;
+            bool isToday = d.Date == DateTime.Today;
+            <div class="vc-col" title="@d.Date.ToString("ddd dd MMM"): @d.Visitors visitors, @d.PageViews page views">
+                <span class="vc-num">@(d.Visitors > 0 ? d.Visitors.ToString() : "")</span>
+                <span class="vc-bar @(isToday ? "today" : "")" style="height:@(Math.Max(h, d.Visitors > 0 ? 4 : 1))%"></span>
+                <span class="vc-day">@(d.Date.Day == 1 || d.Date == Model.Last30[0].Date || isToday ? d.Date.ToString("dd MMM") : d.Date.Day.ToString())</span>
+            </div>
+        }
+    </div>
+
+    <h4 class="vc-sub">Most visited pages — this month</h4>
+    @if (Model.TopPages.Count == 0) { <p class="muted">No visits yet this month.</p> }
+    else
+    {
+        <div class="vc-pages">
+            @foreach (var (path, views) in Model.TopPages)
+            {
+                <div class="vc-page">
+                    <span class="vc-page-name"><a href="/en@(path == "/" ? "" : path)" target="_blank" rel="noopener">@UnifyxWeb.Pages.Admin.IndexModel.PageName(path)</a></span>
+                    <span class="vc-page-bar"><i style="width:@(views * 100 / maxPage)%"></i></span>
+                    <b>@views</b>
+                </div>
+            }
+        </div>
+    }
+    <p class="muted" style="font-size:.82rem;margin:.9rem 0 0">Visits by Admin pages and search-engine robots are not counted. A visitor is one browser in one day; no names or IP addresses are kept.</p>
+</div>
+
+<div class="panel">
+    <h3>What you can change</h3>
+    <p><a href="/admin/texts"><b>Texts</b></a> — every heading, sentence, button and menu name on the website ·
+       <a href="/admin/products">Products</a> — the "Products" menu and a page for each product ·
+       <a href="/admin/modules">Modules</a> — the module cards on the home page ·
+       <a href="/admin/home">Home page</a> — title, picture and the four numbers ·
+       <a href="/admin/news">News</a> · <a href="/admin/popups">Pop-ups</a> · <a href="/admin/team">Our team</a> · <a href="/admin/faqs">FAQ</a></p>
+</div>
+<div class="panel">
+    <h3>Contact details &amp; links</h3>
+    <p class="muted">Phone, email, address, WhatsApp, Facebook and LinkedIn shown across the website.</p>
+    <a class="btn btn-primary" href="/admin/settings">Edit</a>
+</div>

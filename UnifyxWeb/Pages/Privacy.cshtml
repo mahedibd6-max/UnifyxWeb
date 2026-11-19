@@ -1,0 +1,34 @@
+@page
+@{
+    ViewData["Title"] = C.T("privacy.001", "Privacy Policy", "গোপনীয়তা নীতি");
+}
+<div class="page-head"><div class="wrap"><h1>@ViewData["Title"]</h1>
+    <p class="muted">@C.T("privacy.002", "Draft — to be reviewed before publishing.", "খসড়া — প্রকাশের আগে পর্যালোচনা করা হবে।")</p></div></div>
+<section><div class="wrap prose">
+    @if (L.IsBangla)
+    {
+        <p>Unifyx আপনার প্রতিষ্ঠানের তথ্যের গোপনীয়তাকে গুরুত্ব দেয়। এই নীতিতে বলা আছে আমরা কী তথ্য রাখি, কেন রাখি আর কীভাবে সুরক্ষিত রাখি।</p>
+        <h2>আমরা কী তথ্য রাখি</h2>
+        <ul><li>আপনার প্রতিষ্ঠান সফটওয়্যারে যা এন্ট্রি দেয়: কর্মচারী, বেতন, হিসাব, স্টক ইত্যাদি।</li><li>ব্যবহারকারীর লগইন তথ্য আর কে কখন কী বদলেছে তার রেকর্ড।</li><li>ওয়েবসাইটের যোগাযোগ বা ডেমো ফর্মে দেওয়া নাম, ফোন আর ইমেইল।</li></ul>
+        <h2>কীভাবে ব্যবহার করি</h2>
+        <p>শুধু আপনাকে সেবা দিতে, সাপোর্ট দিতে আর সফটওয়্যার উন্নত করতে। আপনার প্রতিষ্ঠানের তথ্য আমরা বিক্রি করি না বা অন্য কাউকে দিই না, আইন অনুযায়ী বাধ্য না হলে।</p>
+        <h2>সুরক্ষা</h2>
+        <p>প্রতিটা প্রতিষ্ঠানের আলাদা ডাটাবেস, এনক্রিপ্টেড সংযোগ (HTTPS), রোলভিত্তিক অনুমতি, লগইন সুরক্ষা আর প্রতিদিনের backup।</p>
+        <h2>আপনার অধিকার</h2>
+        <p>চুক্তি শেষ হলে অনুরোধ করলে আপনার তথ্য রপ্তানি করে দেওয়া হবে, আর নির্দিষ্ট সময় পর মুছে ফেলা হবে।</p>
+        <h2>যোগাযোগ</h2><p>প্রশ্ন থাকলে: @SiteOpt.Value.Email</p>
+    }
+    else
+    {
+        <p>Unifyx takes the privacy of your company's information seriously. This policy explains what we keep, why, and how we protect it.</p>
+        <h2>What we keep</h2>
+        <ul><li>Data your company enters in the software: employees, payroll, accounts, stock and so on.</li><li>User logins and a record of who changed what and when.</li><li>Name, phone and email you give in our website contact or demo form.</li></ul>
+        <h2>How we use it</h2>
+        <p>Only to provide the service, give support and improve the software. We do not sell or share your company's data with anyone, unless the law requires it.</p>
+        <h2>Security</h2>
+        <p>A separate database for each company, encrypted connections (HTTPS), role-based access, login protection and daily backups.</p>
+        <h2>Your rights</h2>
+        <p>When the agreement ends we export your data on request and delete it after an agreed period.</p>
+        <h2>Contact</h2><p>Questions: @SiteOpt.Value.Email</p>
+    }
+</div></section>

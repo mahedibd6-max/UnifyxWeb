@@ -1,0 +1,104 @@
+@page
+@model UnifyxWeb.Pages.ContactModel
+@{
+    ViewData["Title"] = C.T("contact.001", "Contact & demo", "যোগাযোগ ও ডেমো");
+    ViewData["Description"] = C.T("contact.desc", "Request a free demo of Unifyx ERP or contact our team in Dhaka. We reply within one working day, in Bangla or English.", "Unifyx ERP-এর ফ্রি ডেমো চান বা ঢাকায় আমাদের টিমের সাথে যোগাযোগ করুন। এক কর্মদিবসের মধ্যে বাংলা বা ইংরেজিতে উত্তর দিই।");
+    var site = SiteOpt.Value;
+}
+<div class="page-head">
+    <div class="wrap">
+        <span class="eyebrow">@C.T("contact.002", "Contact", "যোগাযোগ")</span>
+        <h1>@C.T("contact.003", "Let's talk about your business", "আপনার প্রতিষ্ঠান নিয়ে কথা বলি")</h1>
+        <p class="muted" style="max-width:640px">@C.T("contact.004", "Tell us a little about your company and we'll arrange a demo with the modules that matter to you.", "আপনার প্রতিষ্ঠান সম্পর্কে একটু জানান, আপনার দরকারি মডিউলগুলো দিয়ে ডেমোর ব্যবস্থা করব।")</p>
+    </div>
+</div>
+<section>
+    <div class="wrap contact-grid">
+        <div>
+            <ul class="info-list">
+                <li><b>@C.T("contact.005", "Phone / WhatsApp", "ফোন / WhatsApp")</b>@site.Phone</li>
+                <li><b>@C.T("contact.006", "Email", "ইমেইল")</b><a href="mailto:@site.Email">@site.Email</a></li>
+                <li><b>@C.T("contact.007", "Office", "অফিস")</b>@site.Address</li>
+                <li><b>@C.T("contact.008", "Hours", "সময়")</b>@C.T("contact.009", "Saturday – Thursday, 9:00 am – 6:00 pm", "শনি – বৃহস্পতিবার, সকাল ৯টা – সন্ধ্যা ৬টা")</li>
+            </ul>
+            <b style="color:var(--navy)">@C.T("contact.010", "Follow us", "আমাদের সাথে থাকুন")</b>
+            <div class="social on-light"><partial name="_SocialLinks" /></div>
+        </div>
+
+        <div class="card demo-card" id="demo">
+            @if (Model.Sent)
+            {
+                <div class="demo-done">
+                    <div class="demo-done-icon" aria-hidden="true">✓</div>
+                    <h3>@C.T("contact.011", "Thank you! We got your request.", "ধন্যবাদ! আপনার অনুরোধ পেয়েছি।")</h3>
+                    <p>@C.T("contact.012", "We'll call you within one working day to fix a time for the demo.", "এক কর্মদিবসের মধ্যে আমরা ফোন করে ডেমোর সময় ঠিক করব।")</p>
+                    <a class="btn btn-ghost" href="@L.Url()">@C.T("contact.013", "Back to home", "হোম পাতায় ফিরুন")</a>
+                </div>
+            }
+            else
+            {
+                <h3>@C.T("contact.014", "Request a free demo", "ফ্রি ডেমোর অনুরোধ")</h3>
+                <p class="muted">@C.T("contact.015", "Fields marked * are needed. It takes less than a minute.", "* চিহ্নিত ঘরগুলো পূরণ করতে হবে। এক মিনিটের কম লাগবে।")</p>
+                <form method="post" class="demo-form" novalidate>
+                    <input type="hidden" asp-for="Stamp" />
+                    <div class="hp" aria-hidden="true">
+                        <label for="Website">Website</label>
+                        <input id="Website" name="Website" type="text" tabindex="-1" autocomplete="off" />
+                    </div>
+
+                    <div class="df-grid">
+                        <div class="df-field">
+                            <label for="Input_Name">@C.T("contact.016", "Your name", "আপনার নাম") *</label>
+                            <input asp-for="Input.Name" autocomplete="name" required />
+                            @if (Model.HasError("Name")) { <span class="df-err">@C.T("contact.017", "Please write your name.", "আপনার নাম লিখুন।")</span> }
+                        </div>
+                        <div class="df-field">
+                            <label for="Input_Company">@C.T("contact.018", "Company", "প্রতিষ্ঠানের নাম") *</label>
+                            <input asp-for="Input.Company" autocomplete="organization" required />
+                            @if (Model.HasError("Company")) { <span class="df-err">@C.T("contact.019", "Please write your company name.", "প্রতিষ্ঠানের নাম লিখুন।")</span> }
+                        </div>
+                        <div class="df-field">
+                            <label for="Input_Phone">@C.T("contact.020", "Mobile number", "মোবাইল নম্বর") *</label>
+                            <input asp-for="Input.Phone" type="tel" autocomplete="tel" placeholder="01XXXXXXXXX" required />
+                            @if (Model.HasError("Phone")) { <span class="df-err">@C.T("contact.021", "Please write a correct mobile number.", "সঠিক মোবাইল নম্বর লিখুন।")</span> }
+                        </div>
+                        <div class="df-field">
+                            <label for="Input_Email">@C.T("contact.022", "Email", "ইমেইল")</label>
+                            <input asp-for="Input.Email" type="email" autocomplete="email" />
+                            @if (Model.HasError("Email")) { <span class="df-err">@C.T("contact.023", "This email address doesn't look right.", "ইমেইল ঠিকানাটা ঠিক মনে হচ্ছে না।")</span> }
+                        </div>
+                        <div class="df-field df-wide">
+                            <label for="Input_Employees">@C.T("contact.024", "Number of employees", "কর্মীর সংখ্যা")</label>
+                            <select asp-for="Input.Employees">
+                                <option value="">@C.T("contact.025", "Choose", "বেছে নিন")</option>
+                                @foreach (var e in UnifyxWeb.Pages.ContactModel.EmployeeChoices)
+                                {
+                                    <option value="@e.Key">@L.T(e.En, e.Bn)</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <fieldset class="df-modules">
+                        <legend>@C.T("contact.026", "Modules you need", "যে মডিউলগুলো দরকার")</legend>
+                        @foreach (var m in UnifyxWeb.Pages.ContactModel.ModuleChoices)
+                        {
+                            <label class="df-chip">
+                                <input type="checkbox" name="Input.Modules" value="@m.Key" @(Model.Input.Modules.Contains(m.Key) ? "checked" : "") />
+                                <span>@L.T(m.En, m.Bn)</span>
+                            </label>
+                        }
+                    </fieldset>
+
+                    <div class="df-field">
+                        <label for="Input_Message">@C.T("contact.027", "Anything else? (optional)", "আর কিছু জানাতে চান? (ঐচ্ছিক)")</label>
+                        <textarea asp-for="Input.Message" rows="3" maxlength="1000"></textarea>
+                    </div>
+
+                    <button class="btn btn-primary btn-lg df-submit" type="submit">@C.T("contact.028", "Send request", "অনুরোধ পাঠান")</button>
+                    <p class="df-note">@C.T("contact.029", "We use these details only to contact you about the demo.", "এই তথ্য শুধু ডেমোর ব্যাপারে আপনার সাথে যোগাযোগের জন্য ব্যবহার করব।")</p>
+                </form>
+            }
+        </div>
+    </div>
+</section>
