@@ -74,43 +74,15 @@
         }
         else
         {
-        <div class="mock-stage" id="mockStage">
+        <div class="hero-video-stage">
             <div class="mock-glow g1" aria-hidden="true"></div>
             <div class="mock-glow g2" aria-hidden="true"></div>
-            <div class="mock-tilt" id="mockTilt">
-                <div class="mock" role="img" aria-label="@C.T("home.048", "Business Overview screen of Unifyx ERP", "Unifyx ERP-এর Business Overview পাতা")">
-                    <div class="mock-bar"><i></i><i></i><i></i><span>Business Overview</span><b class="mock-live">● @C.T("home.049", "Live", "লাইভ")</b></div>
-                    <div class="mock-body">
-                        <div class="mock-kpis">
-                            <div class="kpi k1"><span class="kpi-ic">৳</span><small>@C.T("home.050", "Sales this month", "এ মাসের বিক্রি")</small><strong>Tk 18.4 lakh</strong><em>▲ 12%</em>
-                                <svg class="spark" viewBox="0 0 60 18" aria-hidden="true"><polyline points="0,15 10,12 20,13 30,8 40,9 50,4 60,2"/></svg></div>
-                            <div class="kpi k2"><span class="kpi-ic">↗</span><small>@C.T("home.051", "Profit this month", "এ মাসের লাভ")</small><strong>Tk 3.1 lakh</strong><em>▲ 8%</em>
-                                <svg class="spark" viewBox="0 0 60 18" aria-hidden="true"><polyline points="0,14 10,15 20,10 30,11 40,7 50,8 60,4"/></svg></div>
-                            <div class="kpi k3"><span class="kpi-ic">🏦</span><small>@C.T("home.052", "Cash & bank", "নগদ ও ব্যাংক")</small><strong>Tk 42.7 lakh</strong><em class="flat">@C.T("home.053", "6 accounts", "৬টা হিসাব")</em>
-                                <svg class="spark" viewBox="0 0 60 18" aria-hidden="true"><polyline points="0,9 10,8 20,10 30,7 40,8 50,6 60,6"/></svg></div>
-                        </div>
-                        <div class="mock-row">
-                            <div class="mock-chart">
-                                <small>@C.T("home.054", "Sales by month", "মাসভিত্তিক বিক্রি")</small>
-                                <div class="bars" aria-hidden="true">
-                                    <span style="--h:38%;--d:0"></span><span style="--h:46%;--d:1"></span><span style="--h:41%;--d:2"></span><span style="--h:55%;--d:3"></span>
-                                    <span style="--h:52%;--d:4"></span><span style="--h:63%;--d:5"></span><span style="--h:60%;--d:6"></span><span style="--h:71%;--d:7"></span>
-                                    <span style="--h:68%;--d:8"></span><span style="--h:80%;--d:9"></span><span style="--h:77%;--d:10"></span><span class="now" style="--h:92%;--d:11"></span>
-                                </div>
-                            </div>
-                            <div class="mock-donut">
-                                <small>@C.T("home.055", "Payroll", "বেতন")</small>
-                                <div class="donut" aria-hidden="true"><span>92%</span></div>
-                                <small class="donut-cap">@C.T("home.056", "paid", "পরিশোধিত")</small>
-                            </div>
-                        </div>
-                        <div class="mock-alert">⚠ @C.T("home.057", "3 purchase orders and 5 leave requests are waiting for approval.", "৩টা Purchase Order আর ৫টা ছুটির আবেদন অনুমোদনের অপেক্ষায়।")</div>
-                    </div>
-                </div>
-                <div class="float-card fc1" aria-hidden="true"><span class="fc-ic ok">✓</span><div><b>@(C.T("home.058", "{month} payroll done", "{month} মাসের বেতন সম্পন্ন").Replace("{month}", thisMonth))</b><small>@C.T("home.059", "248 employees · tax deducted", "২৪৮ জন কর্মী · কর কাটা হয়েছে")</small></div></div>
-                <div class="float-card fc2" aria-hidden="true"><span class="fc-ic warn">!</span><div><b>@C.T("home.060", "4 items running low", "৪টা পণ্য প্রায় শেষ")</b><small>@C.T("home.061", "Purchase request ready", "Purchase request তৈরি")</small></div></div>
-                <div class="float-card fc3" aria-hidden="true"><span class="fc-ic up">৳</span><div><b>+Tk 2.4 lakh</b><small>@C.T("home.062", "sales today", "আজকের বিক্রি")</small></div></div>
-            </div>
+            @* 18-second silent loop: separate sheets → one system → live dashboard → Unifyx ERP info. *@
+            <video class="hero-video" id="heroVideo" autoplay muted loop playsinline preload="metadata"
+                   poster="/video/unifyx-hero-poster.jpg" width="1440" height="960"
+                   aria-label="@C.T("home.048", "Business Overview screen of Unifyx ERP", "Unifyx ERP-এর Business Overview পাতা")">
+                <source src="/video/unifyx-hero.mp4" type="video/mp4" />
+            </video>
         </div>
         }
     </div>
@@ -358,6 +330,11 @@
 
 @section Scripts {
 <script>
+// Hero video: show only the still picture when the visitor prefers less motion.
+(function () {
+    var v = document.getElementById('heroVideo');
+    if (v && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { v.removeAttribute('autoplay'); v.pause(); }
+})();
 // Hero screen leans gently toward the mouse (off when the visitor prefers less motion).
 (function () {
     var stage = document.getElementById('mockStage'), tilt = document.getElementById('mockTilt');
