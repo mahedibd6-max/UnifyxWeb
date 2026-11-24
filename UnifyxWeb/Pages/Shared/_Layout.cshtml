@@ -9,7 +9,7 @@
     string pathRest = (Context.Request.Path.Value ?? "").Length > 3 ? Context.Request.Path.Value![4..] : "";
 }
 <!DOCTYPE html>
-<html lang="@L.Code" data-theme="dark">
+<html lang="@L.Code" data-theme="light">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -50,7 +50,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <script>
         // Day / night: the visitor's choice, else the computer's setting (set before the page paints).
-        (function () { try { var t = localStorage.getItem('ux-theme-v2') || 'dark'; /* night by default; the sun/moon button still switches */ document.documentElement.setAttribute('data-theme', t); } catch (e) { } })();
+        (function () { try { var t = localStorage.getItem('ux-theme-v3') || 'light'; /* day by default; the sun/moon button still switches */ document.documentElement.setAttribute('data-theme', t); } catch (e) { } })();
     </script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>

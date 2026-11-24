@@ -79,6 +79,9 @@ builder.Services.AddRateLimiter(o =>
     });
 });
 
+// Browsers remember for a year that this site is HTTPS only (sent outside Development).
+builder.Services.AddHsts(o => { o.MaxAge = TimeSpan.FromDays(365); o.IncludeSubDomains = false; o.Preload = false; });
+
 var app = builder.Build();
 
 await SiteSeed.RunAsync(app.Services);
@@ -99,6 +102,8 @@ app.Use(async (context, next) =>
     h["X-Frame-Options"] = "SAMEORIGIN";
     h["Referrer-Policy"] = "strict-origin-when-cross-origin";
     h["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
+    // Content Security Policy: where scripts, styles, fonts, pictures and frames may come from.
+    h["Content-Security-Policy"] = Csp;
     await next();
 });
 
@@ -121,3 +126,22 @@ app.MapSeo();          // /robots.txt and /sitemap.xml
 app.MapRazorPages();
 
 app.Run();
+
+public partial class Program
+{
+    // 'unsafe-inline' stays because the pages have small scripts and styles inside them.
+    static readonly string Csp = string.Join("; ", new[]
+    {
+        "default-src 'self'",
+        "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com",
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+        "font-src 'self' data: https://fonts.gstatic.com",
+        "img-src 'self' data: blob: https:",
+        "connect-src 'self' https://cloudflareinsights.com",
+        "frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://www.google.com",
+        "object-src 'none'",
+        "base-uri 'self'",
+        "form-action 'self'",
+        "frame-ancestors 'self'",
+    });
+}
