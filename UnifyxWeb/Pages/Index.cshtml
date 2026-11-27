@@ -51,11 +51,17 @@
 }
 
 
+@{
+    bool heroBanner = string.IsNullOrEmpty(h?.HeroImagePath);
+    var heroTitle = Pick(h?.TitleEn, h?.TitleBn, L.T("HR, Payroll, Inventory & Accounts — one system.", "এইচআর, বেতন, স্টক আর হিসাব — এক সফটওয়্যারে।"));
+    var heroParts = heroTitle.Split('—', 2);
+}
 <section class="hero" id="top">
-    <div class="wrap hero-grid">
-        <div>
+    <div class="wrap hero-grid@(heroBanner ? " hero-banner" : "")">
+        <div class="hero-copy">
             <span class="eyebrow">@Pick(h?.EyebrowEn, h?.EyebrowBn, L.T("ERP built for Bangladesh", "বাংলাদেশের জন্য তৈরি ERP"))</span>
-            <h1>@Pick(h?.TitleEn, h?.TitleBn, L.T("HR, Payroll, Inventory & Accounts — one system.", "এইচআর, বেতন, স্টক আর হিসাব — এক সফটওয়্যারে।"))</h1>
+            @* The part after "—" is highlighted. *@
+            <h1>@if (heroParts.Length == 2) { @heroParts[0]<text>—</text><span class="hl">@heroParts[1]</span> } else { @heroTitle }</h1>
             <p class="lead">@Pick(h?.LeadEn, h?.LeadBn, L.T("Unifyx ERP brings your people, salaries, stock, purchases, sales and books together, following Bangladesh income tax and VAT rules — so the numbers always match.",
                                  "Unifyx ERP আপনার কর্মী, বেতন, স্টক, ক্রয়-বিক্রয় আর হিসাব এক জায়গায় আনে, বাংলাদেশের আয়কর আর ভ্যাটের নিয়ম মেনে — যাতে হিসাব সবসময় মেলে।"))</p>
             <div class="hero-cta">
@@ -75,13 +81,11 @@
         else
         {
         <div class="hero-video-stage">
-            <div class="mock-glow g1" aria-hidden="true"></div>
-            <div class="mock-glow g2" aria-hidden="true"></div>
-            @* 18-second silent loop: separate sheets → one system → live dashboard → Unifyx ERP info. *@
+            @* 18-second silent loop (2.2:1, story on the right half): separate sheets → one system → live dashboard → Unifyx ERP info. *@
             <video class="hero-video" id="heroVideo" autoplay muted loop playsinline preload="metadata"
-                   poster="/video/unifyx-hero-poster.jpg" width="1440" height="960"
+                   poster="/video/unifyx-hero-banner-poster.jpg" width="2112" height="960"
                    aria-label="@C.T("home.048", "Business Overview screen of Unifyx ERP", "Unifyx ERP-এর Business Overview পাতা")">
-                <source src="/video/unifyx-hero.mp4" type="video/mp4" />
+                <source src="/video/unifyx-hero-banner.mp4" type="video/mp4" />
             </video>
         </div>
         }
@@ -90,7 +94,7 @@
 
 <div class="strip">
     <div class="wrap">
-        <div class="strip-grid">
+        <div class="strip-grid@(Model.Stats.Count == 0 ? " strip-num" : "")">
         @{
             var stripIcons = new[] {
                 "<svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"7\" rx=\"2\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"7\" rx=\"2\"/><rect x=\"3\" y=\"14\" width=\"7\" height=\"7\" rx=\"2\"/><rect x=\"14\" y=\"14\" width=\"7\" height=\"7\" rx=\"2\"/></svg>",
@@ -108,10 +112,11 @@
         }
         else
         {
-            <div class="strip-item"><span class="strip-ic">@Html.Raw(stripIcons[0])</span><div><strong>@C.T("home.s01", "8 modules", "৮টা মডিউল")</strong><span>@C.T("home.063", "working together in one system", "এক সফটওয়্যারে, একসাথে কাজ করে")</span></div></div>
-            <div class="strip-item"><span class="strip-ic">@Html.Raw(stripIcons[1])</span><div><strong>@C.T("home.s02", "Tax & VAT", "আয়কর ও ভ্যাট")</strong><span>@C.T("home.064", "Bangladesh rules built in", "বাংলাদেশের নিয়ম আগে থেকেই যুক্ত")</span></div></div>
-            <div class="strip-item"><span class="strip-ic">@Html.Raw(stripIcons[2])</span><div><strong>@C.T("home.s03", "Any device", "যেকোনো ডিভাইসে")</strong><span>@C.T("home.065", "Runs in the browser — nothing to install", "ব্রাউজারেই চলে — কিছু ইনস্টল লাগে না")</span></div></div>
-            <div class="strip-item"><span class="strip-ic">@Html.Raw(stripIcons[3])</span><div><strong>@C.T("home.s04", "Bangla help", "বাংলায় সাহায্য")</strong><span>@C.T("home.066", "Guides and support in Bangla", "বাংলায় গাইড আর সাপোর্ট")</span></div></div>
+            @* Big numbers that count up when the strip comes into view (see the script at the bottom). *@
+            <div class="strip-item"><strong class="num" data-to="8">@L.T("8", "৮")</strong><span>@C.T("home.s11", "modules working together in one system", "টা মডিউল, এক সফটওয়্যারে একসাথে")</span></div>
+            <div class="strip-item"><strong class="num" data-from="2000" data-to="2023">@L.T("2023", "২০২৩")</strong><span>@C.T("home.s12", "Income Tax Act and VAT rules built in", "সালের আয়কর আইন আর ভ্যাটের নিয়ম যুক্ত")</span></div>
+            <div class="strip-item"><strong class="num">@L.T("0", "০")</strong><span>@C.T("home.s13", "installs: runs in the browser on any device", "ইনস্টল লাগে না: যেকোনো ডিভাইসের ব্রাউজারে চলে")</span></div>
+            <div class="strip-item"><strong class="num" data-to="100" data-suffix="%">@L.T("100%", "১০০%")</strong><span>@C.T("home.s14", "help and guides in Bangla", "বাংলায় সাহায্য আর গাইড")</span></div>
         }
         </div>
     </div>
@@ -330,6 +335,23 @@
 
 @section Scripts {
 <script>
+// Numbers strip: count up once when it comes into view (Bangla digits on the Bangla page).
+(function () {
+    var nums = document.querySelectorAll('.strip-num .num[data-to]');
+    if (!nums.length || !('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var bn = document.documentElement.lang === 'bn', d = '০১২৩৪৫৬৭৮৯';
+    var show = function (n) { var t = String(n); return bn ? t.replace(/[0-9]/g, function (c) { return d[c]; }) : t; };
+    var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+            if (!e.isIntersecting) return; io.unobserve(e.target);
+            var el = e.target, from = +(el.dataset.from || 0), to = +el.dataset.to, suf = el.dataset.suffix || '', t0 = null;
+            var step = function (ts) { if (!t0) t0 = ts; var k = Math.min(1, (ts - t0) / 1400), v = Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+                el.textContent = show(v) + suf; if (k < 1) requestAnimationFrame(step); };
+            requestAnimationFrame(step);
+        });
+    }, { threshold: .6 });
+    nums.forEach(function (n) { io.observe(n); });
+})();
 // Hero video: show only the still picture when the visitor prefers less motion.
 (function () {
     var v = document.getElementById('heroVideo');

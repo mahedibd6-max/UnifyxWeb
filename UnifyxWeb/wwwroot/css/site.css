@@ -561,9 +561,38 @@ html:not([data-theme="dark"]) .nav-dd-menu a:not(.dd-all):hover .dd-ic { backgro
 @media (max-width: 1200px) { .nav .wrap.nav-inner { width: calc(100% - 48px); } }
 @media (max-width: 600px) { .nav .wrap.nav-inner { width: calc(100% - 32px); } }
 
-/* hero video (replaces the drawn dashboard) */
-.hero-video-stage { position: relative; padding: 24px 0; }
-.hero-video { position: relative; display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; border-radius: 20px; background: #0b1f3a;
-  box-shadow: 0 30px 60px -18px rgba(11,31,58,.45), 0 0 0 1px rgba(11,31,58,.08); }
-html[data-theme="dark"] .hero-video { box-shadow: 0 30px 60px -18px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.08); }
-@media (max-width: 960px) { .hero-video-stage { padding: 8px 0 0; } }
+/* hero banner: the video fills the whole hero box, the text sits on its dark left side */
+.hero-banner { position: relative; display: block; min-height: 560px; padding: 60px 56px; display: flex; align-items: center; border-radius: 26px; overflow: hidden; background: #071427;
+  box-shadow: 0 40px 80px -30px rgba(11,31,58,.55), 0 0 0 1px rgba(11,31,58,.08); isolation: isolate; }
+.hero-banner .hero-copy { position: relative; z-index: 2; max-width: 560px; }
+.hero-banner .eyebrow { color: #ffb08a; background: rgba(255,122,61,.14); border: 1px solid rgba(255,138,92,.45); padding: .35rem .8rem; border-radius: 999px; }
+.hero-banner h1 { color: #fff; font-size: clamp(2.3rem, 3.3vw, 3.25rem); }
+.hero-banner h1 .hl { color: #ff8a4c; background: linear-gradient(90deg, #ff7a3d, #ffb27a); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.hero-banner p.lead { color: #c9d6e8; }
+.hero-banner .btn-ghost { background: rgba(255,255,255,.06); color: #fff; border-color: rgba(255,255,255,.35); }
+.hero-banner .btn-ghost:hover { background: rgba(255,255,255,.12); color: #fff; border-color: #fff; }
+.hero-banner .trust { color: #dbe6f5; }
+.hero-banner .trust li::before { color: #4cd38a; }
+.hero-video-stage { position: absolute; inset: 0; z-index: 0; }
+.hero-video { display: block; width: 100%; height: 100%; object-fit: cover; object-position: right center; background: #071427; }
+.hero-video-stage::after { content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(90deg, rgba(7,20,39,.97) 0%, rgba(7,20,39,.9) 34%, rgba(7,20,39,.5) 43%, rgba(7,20,39,0) 49%); }
+@media (max-width: 960px) {
+  .hero-banner { min-height: 0; padding: 32px 22px 0; }
+  .hero-banner .hero-copy { max-width: none; }
+  .hero-video-stage { position: relative; margin: 28px -22px 0; aspect-ratio: 16 / 9; }
+  .hero-video-stage::after { background: linear-gradient(180deg, #071427 0%, rgba(7,20,39,0) 28%); }
+}
+
+/* numbers strip (style B): dark cards with big counting numbers, half over the hero banner */
+.strip-grid.strip-num { background: none; border: 0; box-shadow: none; overflow: visible; gap: 16px; }
+.strip-grid.strip-num::before { display: none; }
+.strip-grid.strip-num .strip-item { flex-direction: column; align-items: flex-start; gap: .35rem; padding: 1.35rem 1.5rem 1.3rem; border-radius: 18px; border: 1px solid rgba(255,255,255,.12) !important;
+  background: linear-gradient(160deg, #12305a, #0d2342); box-shadow: 0 24px 48px -20px rgba(7,20,39,.7); transition: transform .25s, box-shadow .25s; }
+.strip-grid.strip-num .strip-item::before { display: none; }
+.strip-grid.strip-num .strip-item:hover { background: linear-gradient(160deg, #163a6b, #0f2747); transform: translateY(-4px); box-shadow: 0 30px 56px -20px rgba(7,20,39,.8); }
+.strip-grid.strip-num .num { font-size: 2.7rem; font-weight: 900; letter-spacing: -.03em; line-height: 1; font-variant-numeric: tabular-nums;
+  background: linear-gradient(90deg, #ff7a3d, #ffb27a); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: #ff8a4c; }
+.strip-grid.strip-num .strip-item span { color: #b3c3d9; font-size: .93rem; line-height: 1.4; margin: 0; }
+@media (max-width: 1000px) { .strip-grid.strip-num { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .strip-grid.strip-num { grid-template-columns: 1fr 1fr; gap: 12px; } .strip-grid.strip-num .num { font-size: 2.1rem; } }
