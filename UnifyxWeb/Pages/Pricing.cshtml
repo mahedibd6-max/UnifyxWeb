@@ -83,6 +83,42 @@
     </div>
 </section>
 
+<section class="section-alt" id="shop">
+    <div class="wrap">
+        <div class="section-head">
+            <span class="eyebrow">@C.T("pricing.s01", "Unifyx Shop — for shops", "Unifyx Shop — দোকানের জন্য")</span>
+            <h2>@C.T("pricing.s02", "Simple monthly price for shops", "দোকানের জন্য সহজ মাসিক দাম")</h2>
+            <p>@C.T("pricing.s03", "For mobile, electronics and accessories shops. Start with 14 days free — no card needed. Pay by bKash.", "মোবাইল, ইলেকট্রনিক্স আর এক্সেসরিজের দোকানের জন্য। ১৪ দিন ফ্রি দিয়ে শুরু করুন — কার্ড লাগবে না। bKash-এ টাকা দিন।")</p>
+        </div>
+        @{
+            string signup = (SiteOpt.Value.AppUrl ?? "https://app.unifyxerp.com").TrimEnd('/') + "/Signup";
+            var shopPlans = new[]
+            {
+                (C.T("pricing.s10", "Basic", "বেসিক"), C.T("pricing.s11", "Tk 500", "৫০০ টাকা"), C.T("pricing.s12", "1 shop, 1 counter, up to 3 users", "১টা দোকান, ১টা কাউন্টার, ৩ জন পর্যন্ত ইউজার"), false,
+                    new[] { C.T("pricing.s13", "Selling with barcode and IMEI", "বারকোড ও IMEI দিয়ে বিক্রি"), C.T("pricing.s14", "Stock and simple purchase", "স্টক ও সহজ কেনা"), C.T("pricing.s15", "Customer due (baki) book", "বাকির খাতা"), C.T("pricing.s16", "Warranty, used phones, repairs", "ওয়ারেন্টি, পুরনো ফোন, মেরামত"), C.T("pricing.s17", "My Shop dashboard", "My Shop ড্যাশবোর্ড") }),
+                (C.T("pricing.s20", "Pro", "প্রো"), C.T("pricing.s21", "Tk 1,000", "১,০০০ টাকা"), C.T("pricing.s22", "Up to 3 branches, 5 counters, 10 users", "৩টা শাখা, ৫টা কাউন্টার, ১০ জন ইউজার পর্যন্ত"), true,
+                    new[] { C.T("pricing.s23", "Everything in Basic", "বেসিকের সবকিছু"), C.T("pricing.s24", "Accounts and reports", "হিসাব ও রিপোর্ট"), C.T("pricing.s25", "Branches and more counters", "শাখা ও বেশি কাউন্টার") }),
+                (C.T("pricing.s30", "Business", "বিজনেস"), C.T("pricing.s31", "Tk 2,000", "২,০০০ টাকা"), C.T("pricing.s32", "Unlimited branches, counters and users", "যত খুশি শাখা, কাউন্টার ও ইউজার"), false,
+                    new[] { C.T("pricing.s33", "Everything in Pro", "প্রো-র সবকিছু"), C.T("pricing.s34", "Priority support", "অগ্রাধিকার সাপোর্ট") })
+            };
+        }
+        <div class="grid-3">
+            @foreach (var (name, price, size, featured, points) in shopPlans)
+            {
+                <div class="card price-card @(featured ? "featured" : "")">
+                    @if (featured) { <span class="tag">@C.T("pricing.029", "Most chosen", "সবচেয়ে জনপ্রিয়")</span> }
+                    <h3>@name</h3>
+                    <div class="price">@price <small class="muted">@C.T("pricing.s04", "/ month", "/ মাস")</small></div>
+                    <div class="price-mods">@size</div>
+                    <ul>@foreach (var pt in points) { <li>@pt</li> }</ul>
+                    <a class="btn @(featured ? "btn-accent" : "btn-ghost")" href="@signup">@C.T("pricing.s05", "Start 14 days free", "১৪ দিন ফ্রি চালু করুন")</a>
+                </div>
+            }
+        </div>
+        <p class="muted" style="text-align:center;margin-top:28px">@C.T("pricing.s06", "Pay 10 months and get 12. Your data stays safe even if a payment is late.", "১০ মাসের টাকায় ১২ মাস। টাকা দিতে দেরি হলেও আপনার তথ্য মোছে না।")</p>
+    </div>
+</section>
+
 @section Scripts {
 <script>
 // Count the ticked modules and carry them to the demo form.

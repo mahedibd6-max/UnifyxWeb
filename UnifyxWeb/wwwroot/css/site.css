@@ -604,3 +604,7 @@ html:not([data-theme="dark"]) .nav-dd-menu a:not(.dd-all):hover .dd-ic { backgro
 .card.product-promo p { color: var(--ink-2); margin: .2rem 0 .6rem; }
 .card.product-promo .promo-link { color: var(--blue); font-weight: 600; }
 .more-products { padding-top: 0; }
+
+/* "14 days free" button in the top menu */
+.btn-free { background: #138a52; color: #fff; }
+.btn-free:hover { background: #0f6f42; color: #fff; }

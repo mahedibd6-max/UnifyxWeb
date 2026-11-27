@@ -100,6 +100,12 @@
                 <a href="@L.Url("Pricing")" data-page="pricing">@C.T("layout.008", "Pricing", "প্যাকেজ")</a>
                 <a href="@L.Url("Contact")" data-page="contact">@C.T("layout.009", "Contact", "যোগাযোগ")</a>
                 <a class="btn btn-ghost" href="@site.AppUrl">@C.T("layout.010", "Login", "লগইন")</a>
+                @{
+                    // "14 days free" → the shop sign-up page. Empty this text in Admin → Texts to hide the button.
+                    string freeText = C.T("layout.p05", "14 days free", "১৪ দিন ফ্রি");
+                    string signupUrl = (site.AppUrl ?? "https://app.unifyxerp.com").TrimEnd('/') + "/Signup";
+                }
+                @if (!string.IsNullOrWhiteSpace(freeText)) { <a class="btn btn-free" href="@signupUrl" title="@C.T("layout.p06", "Open a free shop account", "ফ্রি দোকানের অ্যাকাউন্ট খুলুন")">@freeText</a> }
                 <a class="btn btn-accent" href="@L.Url("Contact")#demo">@C.T("layout.011", "Request a demo", "ডেমো দেখুন")</a>
                 <span class="nav-tools">
                     <button class="theme-toggle" type="button" aria-label="@C.T("layout.p04", "Switch day / night", "দিন / রাত বদলান")" title="@C.T("layout.p04", "Switch day / night", "দিন / রাত বদলান")">
@@ -128,6 +134,7 @@
                 <a href="@L.Url()#modules">@C.T("layout.014", "Modules", "মডিউল")</a>
                 <a href="@L.Url("Pricing")">@C.T("layout.015", "Pricing", "প্যাকেজ")</a>
                 <a href="@site.AppUrl">@C.T("layout.016", "Login", "লগইন")</a>
+                @if (!string.IsNullOrWhiteSpace(freeText)) { <a href="@signupUrl">@C.T("layout.p06", "Open a free shop account", "ফ্রি দোকানের অ্যাকাউন্ট খুলুন")</a> }
             </div>
             <div>
                 <h4>@C.T("layout.017", "Company", "প্রতিষ্ঠান")</h4>
