@@ -589,6 +589,25 @@ namespace UnifyxWeb.Migrations
                         .HasMaxLength(80)
                         .HasColumnType("nvarchar(80)");
 
+                    b.Property<int?>("PriceFrom")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SeoDescriptionBn")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("SeoDescriptionEn")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("SeoTitleBn")
+                        .HasMaxLength(70)
+                        .HasColumnType("nvarchar(70)");
+
+                    b.Property<string>("SeoTitleEn")
+                        .HasMaxLength(70)
+                        .HasColumnType("nvarchar(70)");
+
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(60)

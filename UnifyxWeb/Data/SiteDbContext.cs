@@ -121,6 +121,13 @@ public class Product
     [StringLength(2000)] public string? FeaturesBn { get; set; }
     [StringLength(300)] public string? ImagePath { get; set; }
     [StringLength(300)] public string? AppUrl { get; set; }             // "Open" button, e.g. https://app.unifyxerp.com
+    // Search engines (Google) — empty = the name and the one-line summary are used.
+    [StringLength(70)] public string? SeoTitleEn { get; set; }
+    [StringLength(70)] public string? SeoTitleBn { get; set; }
+    [StringLength(300)] public string? SeoDescriptionEn { get; set; }
+    [StringLength(300)] public string? SeoDescriptionBn { get; set; }
+    // Lowest monthly price in Taka, shown to Google as "from Tk …" (empty = no price shown).
+    [Range(0, 10000000)] public int? PriceFrom { get; set; }
     public bool UseHomePage { get; set; }                               // main product: menu goes to the home page
     public bool ComingSoon { get; set; }
     public int SortOrder { get; set; }

@@ -25,6 +25,7 @@ public static class SiteSeed
             }
 
             await AddShopProductAsync(db);
+            await ShopProductSeoAsync(db);
 
             var cfg = sp.GetRequiredService<IConfiguration>();
             string? email = cfg["AdminSeed:Email"], password = cfg["AdminSeed:Password"];
@@ -72,7 +73,18 @@ public static class SiteSeed
                     "আর আজকের বিক্রি, লাভ ও ক্যাশ এক পাতায় দেখুন। যেকোনো কম্পিউটারের ব্রাউজারে চলে — কিছু ইনস্টল করতে হয় না, " +
                     "ইন্টারনেট চলে গেলেও বিক্রি থামে না। ১৪ দিন ফ্রি ব্যবহার করুন, কার্ড লাগবে না। " +
                     "মাসে ৫০০ টাকা থেকে শুরু; ১০ মাসের টাকায় ১২ মাস।",
-                FeaturesEn = string.Join("\n", new[]
+                FeaturesEn = string.Join("\n", ShopCardsEn),
+                FeaturesBn = string.Join("\n", ShopCardsBn),
+                AppUrl = "https://app.unifyxerp.com/Signup",
+                SortOrder = order,
+                IsActive = true
+            });
+        }
+        db.SiteTexts.Add(new SiteText { Key = marker, TextEn = "added", TextBn = "added" });
+        await db.SaveChangesAsync();
+    }
+
+    private static readonly string[] ShopCardsEn = new[]
                 {
                     "🧾 | Fast selling | Barcode or IMEI scan, receipt in seconds | Shift open and close; X / Z report; Works offline",
                     "📱 | IMEI tracking | Every phone kept by its IMEI | Bought from whom; In stock or sold; Search by IMEI-2 too",
@@ -82,8 +94,9 @@ public static class SiteSeed
                     "🛠️ | Repairs | Repair job cards from receive to deliver | Parts from stock; Labour charge; Paid into the shift",
                     "🏷️ | Offers and discounts | Discounts with owner approval | Buy X get Y; Coupons; Minimum price check",
                     "📊 | My Shop | The owner's dashboard | Today's sales and profit; Cash and dues; Low stock and best sellers"
-                }),
-                FeaturesBn = string.Join("\n", new[]
+                };
+
+    private static readonly string[] ShopCardsBn = new[]
                 {
                     "🧾 | দ্রুত বিক্রি | বারকোড বা IMEI স্ক্যান, কয়েক সেকেন্ডে রসিদ | শিফট খোলা-বন্ধ; X / Z রিপোর্ট; ইন্টারনেট ছাড়াও চলে",
                     "📱 | IMEI হিসাব | প্রতিটা ফোন তার IMEI ধরে | কার কাছ থেকে কেনা; স্টকে আছে না বিক্রি; IMEI-2 দিয়েও খোঁজা",
@@ -93,11 +106,25 @@ public static class SiteSeed
                     "🛠️ | মেরামত | জমা থেকে ডেলিভারি পর্যন্ত জব কার্ড | স্টক থেকে পার্টস; মজুরি; টাকা শিফটে যোগ",
                     "🏷️ | অফার ও ছাড় | মালিকের অনুমতিসহ ছাড় | ১টা কিনলে ১টা ফ্রি; কুপন; সর্বনিম্ন দামের নিয়ন্ত্রণ",
                     "📊 | My Shop | মালিকের ড্যাশবোর্ড | আজকের বিক্রি ও লাভ; ক্যাশ ও বাকি; কম স্টক ও বেশি বিক্রি"
-                }),
-                AppUrl = "https://app.unifyxerp.com/Signup",
-                SortOrder = order,
-                IsActive = true
-            });
+                };
+
+    // Once: Google title, description and starting price for "Unifyx Shop", and the feature cards
+    // if its features are still the first plain list. Anything changed in Admin is left alone.
+    private static async Task ShopProductSeoAsync(SiteDbContext db)
+    {
+        const string marker = "seed.product.unifyx-shop.seo";
+        if (await db.SiteTexts.AnyAsync(x => x.Key == marker)) return;
+        var p = await db.Products.FirstOrDefaultAsync(x => x.Slug == "unifyx-shop");
+        if (p != null)
+        {
+            p.SeoTitleEn ??= "Mobile Shop Software — IMEI, Due Book, Warranty | Unifyx Shop";
+            p.SeoTitleBn ??= "মোবাইল দোকানের সফটওয়্যার — IMEI, বাকির খাতা, ওয়ারেন্টি | Unifyx Shop";
+            p.SeoDescriptionEn ??= "POS software for mobile and electronics shops in Bangladesh: sell by IMEI, customer due, warranty, used phone exchange, repairs and daily profit. 14 days free.";
+            p.SeoDescriptionBn ??= "মোবাইল ও ইলেকট্রনিক্স দোকানের POS সফটওয়্যার: IMEI দিয়ে বিক্রি, বাকির খাতা, ওয়ারেন্টি, পুরনো ফোন Exchange, মেরামত আর প্রতিদিনের লাভ। ১৪ দিন ফ্রি।";
+            p.PriceFrom ??= 500;
+            if (p.FeaturesEn != null && p.FeaturesEn.StartsWith("Fast selling with barcode and IMEI scan")) p.FeaturesEn = string.Join("\n", ShopCardsEn);
+            if (p.FeaturesBn != null && p.FeaturesBn.StartsWith("বারকোড ও IMEI স্ক্যান করে দ্রুত বিক্রি")) p.FeaturesBn = string.Join("\n", ShopCardsBn);
+            p.UpdatedAt = DateTime.Now;
         }
         db.SiteTexts.Add(new SiteText { Key = marker, TextEn = "added", TextBn = "added" });
         await db.SaveChangesAsync();

@@ -55,6 +55,9 @@ public class ProductsModel : PageModel
         row.DescriptionEn = T(Input.DescriptionEn); row.DescriptionBn = T(Input.DescriptionBn);
         row.FeaturesEn = T(Input.FeaturesEn); row.FeaturesBn = T(Input.FeaturesBn);
         row.AppUrl = app;
+        row.SeoTitleEn = T(Input.SeoTitleEn); row.SeoTitleBn = T(Input.SeoTitleBn);
+        row.SeoDescriptionEn = T(Input.SeoDescriptionEn); row.SeoDescriptionBn = T(Input.SeoDescriptionBn);
+        row.PriceFrom = Input.PriceFrom;
         row.UseHomePage = Input.UseHomePage; row.ComingSoon = Input.ComingSoon;
         row.SortOrder = Input.SortOrder; row.IsActive = Input.IsActive; row.UpdatedAt = DateTime.Now;
         if (path != null) { _images.Delete(row.ImagePath); row.ImagePath = path; }

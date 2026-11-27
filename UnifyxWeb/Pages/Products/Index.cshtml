@@ -3,7 +3,40 @@
 @{
     var p = Model.One;
     ViewData["Title"] = p == null ? C.T("products.001", "Products", "পণ্য") : PM.Name(p);
-    if (p != null && !string.IsNullOrWhiteSpace(PM.Tagline(p))) ViewData["Description"] = PM.Tagline(p);
+    if (p != null)
+    {
+        // Shop products are sold as "Unifyx", not "Unifyx ERP".
+        ViewData["Brand"] = "Unifyx";
+        if (!string.IsNullOrWhiteSpace(PM.SeoTitle(p))) ViewData["FullTitle"] = PM.SeoTitle(p);
+        var seoDesc = !string.IsNullOrWhiteSpace(PM.SeoDescription(p)) ? PM.SeoDescription(p) : PM.Tagline(p);
+        if (!string.IsNullOrWhiteSpace(seoDesc)) ViewData["Description"] = seoDesc;
+        if (!string.IsNullOrEmpty(p.ImagePath)) ViewData["OgImage"] = p.ImagePath;
+    }
+}
+@section Head {
+    @if (p != null)
+    {
+        var origin = Seo.Origin(ViewContext.HttpContext.Request);
+        var ld = new Dictionary<string, object>
+        {
+            ["@context"] = "https://schema.org", ["@type"] = "SoftwareApplication",
+            ["name"] = PM.Name(p),
+            ["description"] = ViewData["Description"] as string ?? PM.Tagline(p),
+            ["applicationCategory"] = "BusinessApplication",
+            ["operatingSystem"] = "Web browser",
+            ["inLanguage"] = new[] { "bn", "en" },
+            ["url"] = Seo.Url(origin, L.Code, "Products/" + p.Slug),
+            ["publisher"] = new Dictionary<string, object> { ["@type"] = "Organization", ["name"] = "Unifyx", ["url"] = origin }
+        };
+        if (!string.IsNullOrEmpty(p.ImagePath)) { ld["image"] = p.ImagePath.StartsWith("http") ? p.ImagePath : origin + p.ImagePath; }
+        if (p.PriceFrom is int price)
+        {
+            ld["offers"] = new Dictionary<string, object> { ["@type"] = "Offer", ["price"] = price.ToString(), ["priceCurrency"] = "BDT",
+                ["availability"] = p.ComingSoon ? "https://schema.org/PreOrder" : "https://schema.org/InStock" };
+        }
+        var ldJson = System.Text.Json.JsonSerializer.Serialize(ld, new System.Text.Json.JsonSerializerOptions { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping }).Replace("</", "<\\/");
+        <script type="application/ld+json">@Html.Raw(ldJson)</script>
+    }
 }
 @if (p == null)
 {

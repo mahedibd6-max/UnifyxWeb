@@ -13,14 +13,17 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>@(string.IsNullOrEmpty(title) ? "Unifyx ERP" : title + " · Unifyx ERP")</title>
+    <title>@(ViewData["FullTitle"] as string ?? (string.IsNullOrEmpty(title) ? (ViewData["Brand"] as string ?? "Unifyx ERP") : title + " · " + (ViewData["Brand"] as string ?? "Unifyx ERP")))</title>
     <meta name="description" content="@description" />
     @{
         // Full addresses for search engines and social sharing (works on localhost, a tunnel or the real domain).
         string origin = Seo.Origin(Context.Request);
         string pageUrl = Seo.Url(origin, L.Code, pathRest.TrimEnd('/'));
-        string ogImage = origin + "/img/og-image.jpg";
-        string fullTitle = string.IsNullOrEmpty(title) ? "Unifyx ERP" : title + " · Unifyx ERP";
+        // A page may set its own brand ("Unifyx" for shop products), a complete title, or its own share picture.
+        string brand = ViewData["Brand"] as string ?? "Unifyx ERP";
+        string ogImage = ViewData["OgImage"] is string img && img.Length > 0 ? (img.StartsWith("http") ? img : origin + img) : origin + "/img/og-image.jpg";
+        bool ownImage = ViewData["OgImage"] is string img2 && img2.Length > 0;
+        string fullTitle = ViewData["FullTitle"] as string ?? (string.IsNullOrEmpty(title) ? brand : title + " · " + brand);
     }
     <link rel="canonical" href="@pageUrl" />
     <link rel="alternate" hreflang="en" href="@Seo.Url(origin, "en", pathRest.TrimEnd('/'))" />
@@ -28,14 +31,17 @@
     <link rel="alternate" hreflang="x-default" href="@Seo.Url(origin, "en", pathRest.TrimEnd('/'))" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="theme-color" content="#0b1f3a" />
-    <meta property="og:site_name" content="Unifyx ERP" />
+    <meta property="og:site_name" content="@brand" />
     <meta property="og:title" content="@fullTitle" />
     <meta property="og:description" content="@description" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="@pageUrl" />
     <meta property="og:image" content="@ogImage" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    @if (!ownImage)
+    {
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+    }
     <meta property="og:locale" content="@(L.IsBangla ? "bn_BD" : "en_US")" />
     <meta property="og:locale:alternate" content="@(L.IsBangla ? "en_US" : "bn_BD")" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -49,7 +55,6 @@
     <link rel="icon" href="/img/favicon-192.png" sizes="192x192" type="image/png" />
     <link rel="icon" href="/img/favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/img/manifest.json" />
-    <meta name="theme-color" content="#0b3f8f" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet" />

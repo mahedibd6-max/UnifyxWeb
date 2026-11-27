@@ -29,6 +29,8 @@ public class ProductMenu
     public string Name(Product p) => Pick(p.NameEn, p.NameBn);
     public string Tagline(Product p) => Pick(p.TaglineEn, p.TaglineBn);
     public string Description(Product p) => Pick(p.DescriptionEn, p.DescriptionBn);
+    public string SeoTitle(Product p) => Pick(p.SeoTitleEn, p.SeoTitleBn);
+    public string SeoDescription(Product p) => Pick(p.SeoDescriptionEn, p.SeoDescriptionBn);
     public string[] Features(Product p) =>
         Pick(p.FeaturesEn, p.FeaturesBn).Replace("\r", "").Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
