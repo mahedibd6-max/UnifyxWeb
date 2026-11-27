@@ -553,6 +553,10 @@ namespace UnifyxWeb.Migrations
                     b.Property<bool>("ComingSoon")
                         .HasColumnType("bit");
 
+                    b.Property<string>("DemoUrl")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
                     b.Property<string>("DescriptionBn")
                         .HasMaxLength(4000)
                         .HasColumnType("nvarchar(4000)");

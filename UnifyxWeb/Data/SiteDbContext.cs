@@ -121,6 +121,8 @@ public class Product
     [StringLength(2000)] public string? FeaturesBn { get; set; }
     [StringLength(300)] public string? ImagePath { get; set; }
     [StringLength(300)] public string? AppUrl { get; set; }             // "Open" button, e.g. https://app.unifyxerp.com
+    // "Try the demo" button: opens a sample account at once (empty = "Request a demo" form).
+    [StringLength(300)] public string? DemoUrl { get; set; }
     // Search engines (Google) — empty = the name and the one-line summary are used.
     [StringLength(70)] public string? SeoTitleEn { get; set; }
     [StringLength(70)] public string? SeoTitleBn { get; set; }

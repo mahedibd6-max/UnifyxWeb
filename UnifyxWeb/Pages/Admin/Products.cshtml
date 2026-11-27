@@ -47,6 +47,7 @@
         <div class="field"><label asp-for="Input.SeoDescriptionBn">Google description (বাংলা)</label><textarea asp-for="Input.SeoDescriptionBn" rows="3" maxlength="300"></textarea></div>
         <div class="field"><label asp-for="Input.PriceFrom">Price from (Tk per month, optional)</label><input asp-for="Input.PriceFrom" type="number" min="0" step="1" placeholder="500" /><div class="hint">Told to Google as the starting price. Empty = no price.</div></div>
         <div class="field"><label asp-for="Input.AppUrl">"Open" button link (optional)</label><input asp-for="Input.AppUrl" type="text" placeholder="app.unifyxerp.com" /><div class="hint">Where customers log in to this product.</div></div>
+        <div class="field"><label asp-for="Input.DemoUrl">"Try the demo" link (optional)</label><input asp-for="Input.DemoUrl" type="text" placeholder="app.unifyxerp.com/Demo/Shop" /><div class="hint">Opens a sample account with one click. Empty = the button goes to the demo request form.</div></div>
         <div class="field"><label asp-for="Input.SortOrder">Order</label><input asp-for="Input.SortOrder" /><div class="hint">1 shows first.</div></div>
         <div class="field">
             <label asp-for="Image">Picture (optional)</label>

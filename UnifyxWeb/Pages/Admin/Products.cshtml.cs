@@ -40,6 +40,9 @@ public class ProductsModel : PageModel
         string? app = WebLink(Input.AppUrl);
         if (!string.IsNullOrWhiteSpace(Input.AppUrl) && app == null)
             ModelState.AddModelError("Input.AppUrl", "The \"Open\" link doesn't look right.");
+        string? demo = WebLink(Input.DemoUrl);
+        if (!string.IsNullOrWhiteSpace(Input.DemoUrl) && demo == null)
+            ModelState.AddModelError("Input.DemoUrl", "The demo link doesn't look right.");
 
         string? path = null, error = null;
         if (ModelState.IsValid) (path, error) = await _images.SaveAsync(Image);
@@ -55,6 +58,7 @@ public class ProductsModel : PageModel
         row.DescriptionEn = T(Input.DescriptionEn); row.DescriptionBn = T(Input.DescriptionBn);
         row.FeaturesEn = T(Input.FeaturesEn); row.FeaturesBn = T(Input.FeaturesBn);
         row.AppUrl = app;
+        row.DemoUrl = demo;
         row.SeoTitleEn = T(Input.SeoTitleEn); row.SeoTitleBn = T(Input.SeoTitleBn);
         row.SeoDescriptionEn = T(Input.SeoDescriptionEn); row.SeoDescriptionBn = T(Input.SeoDescriptionBn);
         row.PriceFrom = Input.PriceFrom;

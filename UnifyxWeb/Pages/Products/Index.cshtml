@@ -87,7 +87,8 @@ else
             </div>
         </div>
         <div class="hero-cta">
-            <a class="btn btn-accent btn-lg" href="@L.Url("Contact")#demo">@C.T("products.008", "Request a demo", "ডেমো দেখুন")</a>
+            @if (!string.IsNullOrEmpty(p.DemoUrl)) { <a class="btn btn-accent btn-lg" href="@p.DemoUrl">@C.T("products.013", "Try the demo", "ডেমো চালিয়ে দেখুন") ↗</a> }
+            else { <a class="btn btn-accent btn-lg" href="@L.Url("Contact")#demo">@C.T("products.008", "Request a demo", "ডেমো দেখুন")</a> }
             @if (!string.IsNullOrEmpty(p.AppUrl)) { <a class="btn btn-ghost btn-lg" href="@p.AppUrl">@C.T("products.009", "Get started", "শুরু করুন") ↗</a> }
         </div>
     </div></div>
@@ -124,7 +125,8 @@ else
             {
                 <div class="hero-cta" style="justify-content:center;margin-top:32px">
                     <a class="btn btn-accent btn-lg" href="@p.AppUrl">@C.T("products.012", "Start free", "ফ্রি চালু করুন") ↗</a>
-                    <a class="btn btn-ghost btn-lg" href="@L.Url("Contact")#demo">@C.T("products.008", "Request a demo", "ডেমো দেখুন")</a>
+                    @if (!string.IsNullOrEmpty(p.DemoUrl)) { <a class="btn btn-ghost btn-lg" href="@p.DemoUrl">@C.T("products.013", "Try the demo", "ডেমো চালিয়ে দেখুন") ↗</a> }
+                    else { <a class="btn btn-ghost btn-lg" href="@L.Url("Contact")#demo">@C.T("products.008", "Request a demo", "ডেমো দেখুন")</a> }
                 </div>
             }
         </div></section>

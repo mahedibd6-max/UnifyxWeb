@@ -26,6 +26,7 @@ public static class SiteSeed
 
             await AddShopProductAsync(db);
             await ShopProductSeoAsync(db);
+            await ShopProductDemoAsync(db);
 
             var cfg = sp.GetRequiredService<IConfiguration>();
             string? email = cfg["AdminSeed:Email"], password = cfg["AdminSeed:Password"];
@@ -126,6 +127,17 @@ public static class SiteSeed
             if (p.FeaturesBn != null && p.FeaturesBn.StartsWith("বারকোড ও IMEI স্ক্যান করে দ্রুত বিক্রি")) p.FeaturesBn = string.Join("\n", ShopCardsBn);
             p.UpdatedAt = DateTime.Now;
         }
+        db.SiteTexts.Add(new SiteText { Key = marker, TextEn = "added", TextBn = "added" });
+        await db.SaveChangesAsync();
+    }
+
+    // Once: the "Try the demo" button of Unifyx Shop opens the sample shop. Changed in Admin afterwards.
+    private static async Task ShopProductDemoAsync(SiteDbContext db)
+    {
+        const string marker = "seed.product.unifyx-shop.demo";
+        if (await db.SiteTexts.AnyAsync(x => x.Key == marker)) return;
+        var p = await db.Products.FirstOrDefaultAsync(x => x.Slug == "unifyx-shop");
+        if (p != null && string.IsNullOrWhiteSpace(p.DemoUrl)) { p.DemoUrl = "https://app.unifyxerp.com/Demo/Shop"; p.UpdatedAt = DateTime.Now; }
         db.SiteTexts.Add(new SiteText { Key = marker, TextEn = "added", TextBn = "added" });
         await db.SaveChangesAsync();
     }

@@ -268,6 +268,7 @@ public static class SiteTextDefaults
         new("products.009", "products", "Products pages", "Product page", "Get started", "শুরু করুন"),
         new("products.010", "products", "Products pages", "Product cards", "No products yet.", "এখনো কোনো পণ্য যোগ করা হয়নি।"),
         new("products.011", "products", "Products pages", "Product page — feature cards", "Everything you need, in one place", "যা যা লাগে, সব এক জায়গায়"),
+        new("products.013", "products", "Products pages", "Product page", "Try the demo", "ডেমো চালিয়ে দেখুন"),
         new("products.012", "products", "Products pages", "Product page — feature cards", "Start free", "ফ্রি চালু করুন"),
         new("pricing.040", "pricing", "Pricing page", "Build your own plan: modules", "HR & Attendance", "এইচআর ও হাজিরা"),
         new("pricing.041", "pricing", "Pricing page", "Build your own plan: modules", "Employees, leave, shifts, biometric attendance", "কর্মী, ছুটি, শিফট, Biometric হাজিরা"),
