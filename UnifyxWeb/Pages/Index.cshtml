@@ -150,6 +150,33 @@
     </div>
 </section>
 
+@{ var otherProducts = PM.Others; }
+@if (otherProducts.Count > 0)
+{
+<section class="more-products">
+    <div class="wrap">
+        <div class="section-head">
+            <span class="eyebrow">@C.T("home.p01", "More from Unifyx", "Unifyx-এর আরও পণ্য")</span>
+            <h2>@C.T("home.p02", "Running a small shop?", "ছোট দোকান চালান?")</h2>
+            <p>@C.T("home.p03", "Simple software made for shops — separate from the ERP, ready in minutes.", "দোকানের জন্য বানানো সহজ সফটওয়্যার — ERP থেকে আলাদা, কয়েক মিনিটেই চালু।")</p>
+        </div>
+        <div class="promo-grid">
+            @foreach (var op in otherProducts)
+            {
+                <a class="card product-promo" href="@PM.Link(op)">
+                    <div class="icon" aria-hidden="true">@(string.IsNullOrEmpty(op.Icon) ? "▣" : op.Icon)</div>
+                    <div>
+                        <h3>@PM.Name(op) @if (op.ComingSoon) { <em class="dd-soon">@C.T("layout.p03", "Coming soon", "শিগগিরই আসছে")</em> }</h3>
+                        @if (!string.IsNullOrWhiteSpace(PM.Tagline(op))) { <p>@PM.Tagline(op)</p> }
+                        <span class="promo-link">@C.T("home.p04", "See details", "বিস্তারিত দেখুন") →</span>
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+</section>
+}
+
 <section class="section-alt">
     <div class="wrap">
         <div class="section-head">

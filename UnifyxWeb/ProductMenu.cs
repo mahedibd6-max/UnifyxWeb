@@ -39,4 +39,21 @@ public class ProductMenu
         (_lang.IsBangla && !string.IsNullOrWhiteSpace(bn) ? bn : en) ?? "";
 
     public static void Clear(IMemoryCache cache) => cache.Remove(CacheKey);
+
+    // A "what you get" line written as a module card: icon | name | text | point; point; point
+    public record FeatureCard(string Icon, string Name, string Text, string[] Points);
+
+    public static bool IsCard(string line) => line.Contains('|');
+
+    public static FeatureCard Card(string line)
+    {
+        var parts = line.Split('|').Select(x => x.Trim()).ToArray();
+        string Part(int i) => i < parts.Length ? parts[i] : "";
+        var icon = Part(0);
+        var points = Part(3).Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        return new FeatureCard(string.IsNullOrEmpty(icon) ? "▣" : icon, Part(1), Part(2), points);
+    }
+
+    // Products other than the main one (shown on the home page under the modules).
+    public List<Product> Others => Items.Where(x => !x.UseHomePage).ToList();
 }

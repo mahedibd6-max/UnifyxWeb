@@ -40,6 +40,10 @@
 else
 {
     var features = PM.Features(p);
+    // Lines written as "icon | name | text | point; point; point" show as module cards (like the home page);
+    // plain lines show as the ✓ list.
+    var cards = features.Where(UnifyxWeb.ProductMenu.IsCard).Select(UnifyxWeb.ProductMenu.Card).ToArray();
+    var plain = features.Where(f => !UnifyxWeb.ProductMenu.IsCard(f)).ToArray();
     <div class="page-head product-head"><div class="wrap">
         <a href="@L.Url("Products")">← @C.T("products.006", "All products", "সব পণ্য")</a>
         <div class="product-title">
@@ -57,12 +61,39 @@ else
     <section><div class="wrap product-body @(string.IsNullOrEmpty(p.ImagePath) ? "no-pic" : "")">
         <div class="prose">
             @TextFormat.Paragraphs(PM.Description(p))
-            @if (features.Length > 0)
+            @if (plain.Length > 0)
             {
                 <h2>@C.T("products.007", "What you get", "যা পাবেন")</h2>
-                <ul class="product-features">@foreach (var f in features) { <li>@f</li> }</ul>
+                <ul class="product-features">@foreach (var f in plain) { <li>@f</li> }</ul>
             }
         </div>
         @if (!string.IsNullOrEmpty(p.ImagePath)) { <img class="product-shot" src="@p.ImagePath" alt="@PM.Name(p)" /> }
     </div></section>
+    @if (cards.Length > 0)
+    {
+        <section class="section-alt"><div class="wrap">
+            <div class="section-head">
+                <span class="eyebrow">@C.T("products.007", "What you get", "যা পাবেন")</span>
+                <h2>@C.T("products.011", "Everything you need, in one place", "যা যা লাগে, সব এক জায়গায়")</h2>
+            </div>
+            <div class="grid-4">
+                @foreach (var c in cards)
+                {
+                    <div class="card">
+                        <div class="icon" aria-hidden="true">@c.Icon</div>
+                        <h3>@c.Name</h3>
+                        @if (!string.IsNullOrWhiteSpace(c.Text)) { <p>@c.Text</p> }
+                        @if (c.Points.Length > 0) { <ul>@foreach (var pt in c.Points) { <li>@pt</li> }</ul> }
+                    </div>
+                }
+            </div>
+            @if (!string.IsNullOrEmpty(p.AppUrl))
+            {
+                <div class="hero-cta" style="justify-content:center;margin-top:32px">
+                    <a class="btn btn-accent btn-lg" href="@p.AppUrl">@C.T("products.012", "Start free", "ফ্রি চালু করুন") ↗</a>
+                    <a class="btn btn-ghost btn-lg" href="@L.Url("Contact")#demo">@C.T("products.008", "Request a demo", "ডেমো দেখুন")</a>
+                </div>
+            }
+        </div></section>
+    }
 }

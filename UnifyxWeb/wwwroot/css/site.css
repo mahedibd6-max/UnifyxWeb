@@ -596,3 +596,11 @@ html:not([data-theme="dark"]) .nav-dd-menu a:not(.dd-all):hover .dd-ic { backgro
 .strip-grid.strip-num .strip-item span { color: #b3c3d9; font-size: .93rem; line-height: 1.4; margin: 0; }
 @media (max-width: 1000px) { .strip-grid.strip-num { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .strip-grid.strip-num { grid-template-columns: 1fr 1fr; gap: 12px; } .strip-grid.strip-num .num { font-size: 2.1rem; } }
+
+/* other products under the home page modules (Admin → Products) */
+.promo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; max-width: 920px; margin: 0 auto; }
+.card.product-promo { display: flex; gap: 1.1rem; align-items: flex-start; text-decoration: none; color: inherit; border: 2px solid #bfd6f5; }
+.card.product-promo .icon { flex: 0 0 auto; width: 56px; height: 56px; font-size: 1.7rem; margin: 0; }
+.card.product-promo p { color: var(--ink-2); margin: .2rem 0 .6rem; }
+.card.product-promo .promo-link { color: var(--blue); font-weight: 600; }
+.more-products { padding-top: 0; }

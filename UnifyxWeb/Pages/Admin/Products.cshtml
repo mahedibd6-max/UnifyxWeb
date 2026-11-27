@@ -35,8 +35,10 @@
         <div class="field"><label asp-for="Input.TaglineBn">One-line summary (বাংলা)</label><input asp-for="Input.TaglineBn" /></div>
         <div class="field"><label asp-for="Input.DescriptionEn">About the product (English)</label><textarea asp-for="Input.DescriptionEn" rows="6"></textarea><div class="hint">Leave an empty line between paragraphs.</div></div>
         <div class="field"><label asp-for="Input.DescriptionBn">About the product (বাংলা)</label><textarea asp-for="Input.DescriptionBn" rows="6"></textarea></div>
-        <div class="field"><label asp-for="Input.FeaturesEn">What you get (English)</label><textarea asp-for="Input.FeaturesEn" rows="5" placeholder="One per line"></textarea><div class="hint">One per line — each shows with a ✓.</div></div>
-        <div class="field"><label asp-for="Input.FeaturesBn">What you get (বাংলা)</label><textarea asp-for="Input.FeaturesBn" rows="5"></textarea></div>
+        <div class="field"><label asp-for="Input.FeaturesEn">What you get (English)</label><textarea asp-for="Input.FeaturesEn" rows="5" placeholder="One per line"></textarea><div class="hint">One per line — each shows with a ✓.<br />
+            For a card like the home page modules, write: <code>icon | name | one-line text | point; point; point</code><br />
+            e.g. <code>📱 | IMEI tracking | Every phone kept by its IMEI | Bought from whom; In stock or sold; Warranty end date</code></div></div>
+        <div class="field"><label asp-for="Input.FeaturesBn">What you get (বাংলা)</label><textarea asp-for="Input.FeaturesBn" rows="5"></textarea><div class="hint">একই নিয়ম: <code>আইকন | নাম | এক লাইনের বর্ণনা | পয়েন্ট; পয়েন্ট; পয়েন্ট</code></div></div>
         <div class="field"><label asp-for="Input.Icon">Icon</label><input asp-for="Input.Icon" placeholder="🧾" maxlength="8" /><div class="hint">Click an icon below, or type / paste any emoji.</div><partial name="_IconPicker" /></div>
         <div class="field"><label asp-for="Input.Slug">Page address</label><input asp-for="Input.Slug" placeholder="made from the name" /><div class="hint">/en/Products/<b>this-part</b>. Leave empty to make it from the English name.</div></div>
         <div class="field"><label asp-for="Input.AppUrl">"Open" button link (optional)</label><input asp-for="Input.AppUrl" type="text" placeholder="app.unifyxerp.com" /><div class="hint">Where customers log in to this product.</div></div>
